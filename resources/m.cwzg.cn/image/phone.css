@@ -1,0 +1,65 @@
+﻿html,body{width:100%;font-size:14px;font-family:STHeiti,Arial;line-height:22px}
+*{margin:0;padding:0}
+.clearfix:after{clear:both;display:block;visibility:hidden;height:0;content:" ."}
+.clearfix{height:1%}
+ul li{list-style-type:none;}
+a:visited{text-decoration:none;}
+a{text-decoration:none; color: #333;}
+
+a:hover{color:#b00;text-decoration:none;}
+img{border:0}
+.logo{float:left;display:block;width:104px;height:39px;}
+header section{position:relative;padding:5px 0 10px 0;height:50px;}
+header time{float:right;margin-top:10px;font-size:12px;line-height:18px; padding-right: 5px;}
+header section .divt{position:absolute;right:5px;bottom:0px;float:right;font-size:12px;}
+header section div img{max-width:47px;max-height:21px;min-width:47px;min-height:21px;vertical-align:middle;}
+header nav{height:35px;background:url(../../../images/cwchina/mobile/nav.jpg) repeat-x;}
+header nav ul{overflow:hidden;height:35px;}
+header nav ul li{float: left;padding:0 8px;width: 12%;text-align:center;line-height:35px;}
+header nav ul li a{color:white;}
+header nav ul li:hover,header nav ul li.current{background:url(../../../images/cwchina/mobile/index.jpg) repeat-x;}
+header nav ul li a:hover{color:white;}
+
+
+.na {  border-bottom: 5px solid  blue;  border-top: 5px solid  blue; }
+.na ul li{ height: 40px; line-height: 40px; padding: 0 10px; border-bottom: 1px solid #d9d9d9; border-top: 1px  solid #fdfdfd;  background-color:#eee;}
+.na ul li:hover{  background-color:#fff8ae;}
+.na ul li a{ color: #000; display:inline-block; font-size: 18px; width: 100px;}
+.na ul li span{ color: #000; display:inline-block; font-size: 18px; width: 100px;}
+.na ul li em a{ color: #c20306; font-style: normal; font-size: 15px; padding: 0 3px;  width: auto;}
+.hd{ height: 30px; line-height: 30px; text-align: center;}
+.footer{padding:15px 10px;border-top:1px solid #d3d3dd;background-color:#eaeaf2;text-align:center;}
+.footer p{color:#333;text-align:center;font-family:arial;line-height:25px}
+.footer p a{display:inline}
+.article{margin:0 auto;width:98%}
+h2{overflow:hidden;height:42px;border-bottom:1px dashed #bebebe;text-align:center;font-size:20px;font-family:"微软雅黑";line-height:42px}
+h2 a{color:#d60c03}
+.column,.columns{overflow:hidden}
+.column h3{overflow:hidden;padding:8px 10px 0;height:20px;color:#222;text-overflow:ellipsis;white-space:nowrap;line-height:20px}
+.column h3:hover{color:red}
+.img-txt{overflow:hidden;padding:5px 5px 15px 10px;height:87px;border-bottom:1px dashed #bebebe;color:#666}
+.img-txt img{float:left;margin-right:10px}
+.img-txt p{overflow:hidden;height:87px;text-overflow:ellipsis;line-height:22px;word-break:normal}
+.five{border-bottom:0}
+.page{margin:10px auto;min-height:40px;text-align:center;line-height:45px}
+.page .last{padding-left:10px;width:70px;background:url(../../../images/cwchina/mobile/last.jpg) no-repeat}
+.page .last:hover{background:url(../../../images/cwchina/mobile/last.jpg) no-repeat}
+.page .next{padding-right:10px;width:70px;background:url(../../../images/cwchina/mobile/next.jpg) no-repeat}
+.page .next:hover{background:url(../../../images/cwchina/mobile/next.jpg) no-repeat}
+.page a{display:inline-block;margin-right:5px;width:32px;height:29px;background:url(../../../images/cwchina/mobile/page_A.jpg) no-repeat;color:white;line-height:29px}
+.page a:hover,.page a.current{background:url(../../../images/cwchina/mobile/ho.jpg) no-repeat}
+header .section{padding:10px;height:30px;border-bottom:1px solid #bebebe}
+header .home{float:left;display:inline-block;width:24px;height:21px;background:url(../../../images/cwchina/mobile/hone.png) no-repeat}
+header .menu{float:right;display:inline-block;width:25px;height:20px;background:url(../../../images/cwchina/mobile/ex.png) no-repeat;cursor: pointer;}
+header .title{float:none;margin:0 auto;width:80px;height:30px;color:#453c79;font-weight:bold;font-size:18px;font-family:"微软雅黑"}
+header time{color:#666}
+article h1{overflow:hidden;margin-top:5px;margin-bottom:5px;color:#453c79;text-overflow:ellipsis;font-size:20px;font-family:"微软雅黑";line-height:30px;word-break:normal}
+.detal{padding:0 10px; font-size: 16px;}
+.detal p{padding:10px 0;text-indent:2em;line-height:24px}
+.detal .pic{padding:10px 0;text-align:center}
+.detal .pic img{max-width:170px;max-height:170px;min-width:100px;min-height:100px}
+.po{font-weight:bold}
+#sharelist{ background-color: white;text-align: left;padding:2px 2px;position: fixed;right: 13px;top: 30px; width:75px;border:1px solid gray;}
+a.go_top { position: fixed;bottom: 5px;right: 5px;display: block; width: 40px; height: 40px; margin-bottom: 20px; background: url(../../../images/cwchina/cha.png) no-repeat; cursor: pointer; }
+a.go_top { background-position: 0 -240px; }
+a.go_top:hover { background-position: -60px -240px; }

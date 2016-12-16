@@ -17,8 +17,10 @@ Route::get('/', function(){
 
 Route::get('/list/{ttid?}/{classid?}/', 'NewsController@newsList');
 
-Route::get('/info/{classid}/{id}/', 'NewsController@newsInfo');
+Route::get('/info/{id}/', 'NewsController@newsInfo');
 
-Route::get('/ajax/newsList/', 'NewsController@AjaxNewsList');
+Route::post('/ajax/list/load', 'NewsController@AjaxNewsListLoad');
 
 Route::get('/ajax/newsInfo/', 'NewsController@AjaxNewsInfo');
+
+Route::get('/home', 'HomeController@index');

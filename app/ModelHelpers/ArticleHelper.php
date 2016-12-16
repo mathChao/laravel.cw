@@ -3,18 +3,13 @@
 namespace App\ModelHelpers;
 
 use App\Models\Article as DbArticle;
-use App\Business\Article as BusinessArticle;
+use App\BusinessModels\Article as BusinessArticle;
 
 use DB;
 use Cache;
 
 class ArticleHelper{
     private static $_instance = [];
-
-    public function __construct()
-    {
-        $this->_articleTable = config('cwzg.edbPrefix').'ecms_article';
-    }
 
     /**
      * @param $id
@@ -32,16 +27,41 @@ class ArticleHelper{
         return self::$_instance[$id];
     }
 
-    public static function articleSearch($filter = null, $pageRow = null, $page = 1, $orderBy = null){
-        $cacheId = 'article-search-aids-'.json_encode($filter).'-'.$pageRow.'-'.$page.'-'.$orderBy;
+    /**
+     * @param null $filter
+     * @param null $pageRow
+     * @param int $page
+     * @param null $orderBy
+     * @return array
+     */
+    public static function articleSearch($filter = null, $pageRow = null, $page = 1, $orderBy = 'newstime desc'){
+        $cacheId = 'article-search-ids-'.cacheTagTransfer($filter).'-'.$pageRow.'-'.$page.'-'.cacheTagTransfer($orderBy);
         $ids = Cache::remember($cacheId, CACHE_TIME, function()use($filter, $pageRow, $page, $orderBy){
             $db = DB::table(config('cwzg.edbPrefix').'ecms_article');
             if($filter && is_array($filter)){
-                $db->where($filter);
+                foreach($filter as $key => $value){
+                    if( strpos($key,  ' ')){
+                        $arr = explode(' ', $key);
+                        $field = $arr[0];
+                        $op = $arr[1];
+                        if($op == 'in'){
+                            $db->whereIn($field, $value);
+                        }else{
+                            $db->where($field, $op, $value);
+                        }
+
+                    }else{
+                        $db->where($key, $value);
+                    }
+                }
             }
 
-            if($page && $pageRow){
-                $db->limit($pageRow)->skip(($page-1)*$pageRow);
+            if($pageRow){
+                $db->limit($pageRow);
+            }
+
+            if($page){
+                $db->skip(($page-1)*$pageRow);
             }
 
             if($orderBy){
@@ -57,5 +77,23 @@ class ArticleHelper{
         }
 
         return $articles;
+    }
+
+    public static function getArticleCount($filter = null){
+        $cacheId = 'article-count-'.cacheTagTransfer($filter);
+        return Cache::remember($cacheId, CACHE_TIME, function()use($filter){
+            $db = DB::table(config('cwzg.edbPrefix').'ecms_article');
+            if($filter && is_array($filter)){
+                foreach($filter as $key => $value){
+                    if( strpos($key,  ' ')){
+                        $arr = explode(' ', $key);
+                        $db->where($arr[0], $arr[1], $value);
+                    }else{
+                        $db->where($key, $value);
+                    }
+                }
+            }
+            return $db->count();
+        });
     }
 }
