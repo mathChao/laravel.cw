@@ -49,7 +49,7 @@ function clearImageSizeSet($str){
 
 function imageAddPrefix($str, $prefix = null, $filePrefix = null){
     if($prefix || $filePrefix){
-        $pattern = '/(http:.+?)?\/d\/file(\/uploadfile\/\d{4}\/\d{4}\/)(\w+?)\.(jpg|png)/';
+        $pattern = '/(http:.+?)?\/d\/file(\/uploadfile\/\d{4}\/\d{4}\/)(\w+?)\.(jpg|png|jpeg|gif|bmp)/';
         //preg_match_all($pattern, $str, $match);
         //dd($match);
         $str = preg_replace($pattern, $prefix.'$2'.$filePrefix.'$3.$4', $str);

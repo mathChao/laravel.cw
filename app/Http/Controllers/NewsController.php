@@ -42,6 +42,7 @@ class NewsController extends Controller{
         }
 
         $articles = ArticleHelper::articleSearch($filter, $pageRow, $page, $orderBy);
+        $topArticles = ArticleHelper::articleSearch(['firsttitle >'=>0], 1, null);
 
         if($ttid == 12){
             $classid = 80;
@@ -49,6 +50,7 @@ class NewsController extends Controller{
 
         return view('list', [
             'articles' => $articles,
+            'topArticle' => !empty($topArticles) ? current($topArticles) : null,
             'ttid' => $ttid,
             'classid' => $classid,
         ]);

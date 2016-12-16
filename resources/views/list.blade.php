@@ -4,7 +4,11 @@
     <div class="p-list">
         <article class="article" >
             <section class="column js-article-list-wrap">
-                <h2><a href="3-article.html" title="苏联崩塌的第一块版图：立陶宛;一个“教授”的作用" >苏联崩塌的第一块版图：立陶宛;一个“教授”的作用</a></h2>
+                @if($topArticle && $ttid == 12 && $classid == 80)
+                <h2>
+                    <a href="{{url($topArticle->url)}}" title="{{$topArticle->title}}" >{{$topArticle->title}}</a>
+                </h2>
+                @endif
                 @foreach($articles as $article)
                     <section>
                         <a href="{{url($article->url)}}">

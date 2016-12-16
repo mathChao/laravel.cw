@@ -10,7 +10,7 @@ class CommonComposer{
         $navigation = [
             '首页' => [
                 'ttid' => 12,
-                'url' => '/list/12/'
+                'url' => '/'
             ],
 
             '头条' => [

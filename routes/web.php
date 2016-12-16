@@ -15,6 +15,8 @@ Route::get('/', function(){
     return view('welcome');
 });
 
+Route::get('/', 'NewsController@newsList');
+
 Route::get('/list/{ttid?}/{classid?}/', 'NewsController@newsList');
 
 Route::get('/info/{id}/', 'NewsController@newsInfo');
