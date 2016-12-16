@@ -14,7 +14,7 @@ $(function(){
         content += '<a href="'+article.url+'">';
         content += '<h3 >'+article.title+'</h3>';
         content += '<div class="img-txt" >';
-        content += '<img src="'+article.titlepic+'" >';
+        content += '<img src="'+article.prefixImgTitlepic+'" >';
         content += '<p>'+article.smalltext+'</p >';
         content += '</div >';
         content += '</a >';

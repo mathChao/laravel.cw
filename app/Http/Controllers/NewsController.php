@@ -86,6 +86,7 @@ class NewsController extends Controller{
 
         $orderBy = 'newstime desc';
         $articles = ArticleHelper::articleSearch($filter, $pageRow, $post['page'], $orderBy);
+
         foreach($articles as &$article){
             $article = $article->toArray();
         }
@@ -95,7 +96,6 @@ class NewsController extends Controller{
         ]);
 
     }
-
 
     public function newsInfo($id){
         $article = ArticleHelper::getArticleInfo($id);
@@ -113,6 +113,5 @@ class NewsController extends Controller{
             'class' => $class,
             'ttid' => Session::has('ttid') ? Session::get('ttid') : 12,
         ]);
-
     }
 }

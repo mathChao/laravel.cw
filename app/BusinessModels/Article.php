@@ -51,9 +51,32 @@ class Article extends Model{
         return ArticleHelper::articleSearch($filter, 3, null, 'newstime desc');
     }
 
+    public function getImagePrefixTitlePic(){
+        $cacheId = 'article-titlepic-image-prefix'.$this->model->id;
+        //Cache::forget($cacheId);
+        return Cache::remember($cacheId, CACHE_TIME, function(){
+            return imageAddPrefix($this->model->titlepic, config('cwzg.imageUrl'), 'thumb_131_87_');
+        });
+    }
+
+    public function getImagePrefixNewstext(){
+        $cacheId = 'article-newtext-image-prefix'.$this->model->id;
+        //Cache::forget($cacheId);
+        return Cache::remember($cacheId, CACHE_TIME, function(){
+            return imageAddPrefix($this->newstext, config('cwzg.imageUrl'), 'thumb_220_0_');
+        });
+    }
+
     protected function asynLoad1(){
         $this->attributes['url'] = '/info/'.$this->model->id;
-        $this->attributes = array_merge($this->attributes, $this->getArticleData());
+        $this->attributes['prefixImgTitlepic'] = $this->getImagePrefixTitlePic();
     }
+
+    protected function asynLoad2(){
+        $this->attributes = array_merge($this->attributes, $this->getArticleData());
+        $this->attributes['prefixImgNewtext'] = $this->getImagePrefixNewstext();
+    }
+
+
 
 }

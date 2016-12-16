@@ -55,7 +55,22 @@ class Model{
         return !$this->model;
     }
 
+    public function loadAllData(){
+        $i = 0;
+        while($i < count($this->asynStatus)){
+            if(!$this->asynStatus[$i]){
+                $method = 'asynLoad'.($i+1);
+                if(method_exists($this, $method)){
+                    $this->{$method}();
+                }
+                $this->asynStatus[$i] = true;
+            }
+            $i++;
+        }
+    }
+
     public function toArray(){
+        $this->loadAllData();
         return array_merge($this->model->toArray(), $this->attributes);
     }
 }
