@@ -105,6 +105,8 @@ class NewsController extends Controller{
 
         $class = EnewsclassHelper::getClassInfo($article->classid);
 
+        clearImageSizeSet($article->newstext);
+
         return view('content', [
             'article' => $article,
             'related' => $article->getRelatedArticle(),

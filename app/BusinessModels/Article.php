@@ -53,7 +53,6 @@ class Article extends Model{
 
     public function getImagePrefixTitlePic(){
         $cacheId = 'article-titlepic-image-prefix'.$this->model->id;
-        //Cache::forget($cacheId);
         return Cache::remember($cacheId, CACHE_TIME, function(){
             return imageAddPrefix($this->model->titlepic, config('cwzg.imageUrl'), 'thumb_131_87_');
         });
@@ -61,9 +60,9 @@ class Article extends Model{
 
     public function getImagePrefixNewstext(){
         $cacheId = 'article-newtext-image-prefix'.$this->model->id;
-        //Cache::forget($cacheId);
+        Cache::forget($cacheId);
         return Cache::remember($cacheId, CACHE_TIME, function(){
-            return imageAddPrefix($this->newstext, config('cwzg.imageUrl'), 'thumb_220_0_');
+            return imageAddPrefix($this->attributes['newstext'], config('cwzg.imageUrl'), 'thumb_220_0_');
         });
     }
 

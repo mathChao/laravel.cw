@@ -1,12 +1,21 @@
 @extends('layouts.content')
 
+@section('user_css')
+    <style>
+        .article-content img{
+            width: auto !important;
+            height: auto !important;
+        }
+    </style>
+@endsection
+
 @section('content')
     <div class="p-content">
         <article class="detal" >
             <h1 >{{$article->title}}</h1 >
             <span style="margin-right: 16px;" >作者：{{$article->author}}</span >
             <time >{{date('Y-m-d H:m', $article->newstime)}}</time >
-            <section class="js-article-content">
+            <section class="js-article-content article-content">
                 {!! $article->prefixImgNewtext !!}
             </section >
         </article>

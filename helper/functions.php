@@ -40,8 +40,11 @@ function getKeywordsCacheId($keywords){
     return 'article-keywords-'.md5($keywords);
 }
 
-function clearImageSizeSet(){
-
+function clearImageSizeSet($str){
+    $pattern = '/(<img.+?style=.+?)(width:\s*?\d{1,4}px;?)(.+?)(height:\s*?\d{1,4}px;?)/';
+//    preg_match_all($pattern, $str, $match);
+//    var_dump($match);
+    return preg_replace($pattern, '$1$3', $str);
 }
 
 function imageAddPrefix($str, $prefix = null, $filePrefix = null){
