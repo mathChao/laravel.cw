@@ -21,7 +21,7 @@ class CaeatePhpcmsMigration extends Migration
             $table->integer('phpcms_id');
             $table->string('ecms_table', 64);
             $table->integer('ecms_id');
-            $table->text('data')->default();
+            $table->text('data')->default('');
             $table->timestamps();
         });
     }
