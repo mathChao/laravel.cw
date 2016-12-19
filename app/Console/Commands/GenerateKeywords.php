@@ -50,12 +50,15 @@ class GenerateKeywords extends Command
         //
         $this->info('生成文章关键字索引关系');
 
-        $this->output->progressStart(DB::table($this->_edbPrefix.'ecms_article')->count());
+        $this->output->progressStart(DB::table($this->_edbPrefix.'ecms_article')->where('keyboard', '!=', '')->count());
         $keywords = [];
-        DB::table($this->_edbPrefix.'ecms_article')->select(['id','keyboard'])->chunk(1000, function($articles)use( &$keywords ){
+        DB::table($this->_edbPrefix.'ecms_article')
+            ->select(['id','keyboard'])
+            ->where('keyboard', '!=', '')
+            ->chunk(1000, function($articles)use( &$keywords ){
             foreach($articles as $article){
                 $this->output->progressAdvance();
-                $articleKeywords = explode(',', $article->keyboard);
+                $articleKeywords = explodea([',', '，'], $article->keyboard);
                 foreach($articleKeywords as $keyword){
                     if($keyword){
                         if(isset($keywords[$keyword]) && !in_array($article->id, $keywords[$keyword])){

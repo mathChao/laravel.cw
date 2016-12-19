@@ -56,3 +56,13 @@ function imageAddPrefix($str, $prefix = null, $filePrefix = null){
     }
     return $str;
 }
+
+function explodea($delimiter, $string){
+    if(is_string($delimiter)){
+        return explode($delimiter, $string);
+    }elseif(is_array($delimiter)){
+        $d = current($delimiter);
+        $string = str_replace($delimiter, $d, $string);
+        return explode($d, $string);
+    }
+}
