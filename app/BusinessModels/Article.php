@@ -60,7 +60,6 @@ class Article extends Model{
 
     public function getImagePrefixNewstext(){
         $cacheId = 'article-newtext-image-prefix'.$this->model->id;
-        Cache::forget($cacheId);
         return Cache::remember($cacheId, CACHE_TIME, function(){
             return imageAddPrefix($this->attributes['newstext'], config('cwzg.imageUrl'), 'thumb_220_0_');
         });
