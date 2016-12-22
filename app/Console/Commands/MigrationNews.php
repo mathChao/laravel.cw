@@ -152,21 +152,20 @@ class MigrationNews extends Command
                         $isgood += 1;
                     }
 
-                    if(in_array(35, $newsPosition)){
-                        //独家
-                        $ttid = 1;
-                    }elseif(in_array(37, $newsPosition)){
+                    if(in_array(37, $newsPosition)){
                         //深度
-                        $ttid = 2;
-                    }elseif(in_array(43, $newsPosition)){
-                        //时评
-                        $ttid = 3;
-                    }elseif(in_array(42, $newsPosition)){
+                        $isgood = 5;
+                    }
+
+                    if(in_array(42, $newsPosition)){
                         //智库
                         $ttid = 4;
                     }elseif(in_array(38, $newsPosition)){
                         //争鸣
                         $ttid = 5;
+                    }elseif(in_array(35, $newsPosition) || in_array(43, $newsPosition)){
+                        //独家 时评
+                        $ttid = 3;
                     }
 
                     $copyfrom = explode('|', $newsData->copyfrom);
@@ -181,12 +180,12 @@ class MigrationNews extends Command
                         'username' => $news->username,
                         'author' => $newsData->author,
                         'editor' => $newsData->responsibleeditor,
-                        'newspath' => date($this->_eclass->newspath),
+                        'newspath' => date($this->_eclass->newspath, $news->inputtime),
                         'filename'=>$id,
                         'newstime' => $news->inputtime,
                         'truetime' => $news->inputtime,
                         'lastdotime' => $news->updatetime,
-                        'titleurl' => $news->islink ? $news->url : $sitePrefix.$this->_eclass->classpath.'/'.date($this->_eclass->newspath).'/'.$id.$this->_eclass->filetype,
+                        'titleurl' => $news->islink ? $news->url : $sitePrefix.$this->_eclass->classpath.'/'.date($this->_eclass->newspath, $news->inputtime).'/'.$id.$this->_eclass->filetype,
                         'userfen' => $newsData->readpoint,
                         'titlefont' => str_replace([';', 'bold'], [',', 'b'], $news->style),
                         'ispic' => $news->thumb ? 1 : 0,
