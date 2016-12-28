@@ -64,9 +64,6 @@ class MigrationNews extends Command
         $this->_pclass = DB::table('cw_category')->where('catname', $classname)->first();
         $this->_befrom_class = DB::table($this->_edbPrefix.'enewsclass')->where('classid', 11)->first();
 
-        //var_dump( $this->_eclass);
-        //var_dump( $this->_pclass);
-
         if (!empty($this->_eclass) && !empty($this->_pclass)) {
             $this->_mainTable = $this->_edbPrefix.'ecms_'.$this->_eclass->tbname;
             $this->_sideTable  = $this->_edbPrefix.'ecms_'.$this->_eclass->tbname.'_data_1';
@@ -94,12 +91,16 @@ class MigrationNews extends Command
                 ->keys()
                 ->toArray();
 
+            $moodTable = $this->_edbPrefix.'ecmsextend_mood';
+            $moods = DB::table($moodTable)->select('id')->get()->keyBy('id')->keys()->toArray();
+
             $data = [
                 'system' => $system,
                 'sitePrefix' => $system->newsurl ? $system->newsurl : '/',
                 'befrom' => $befrom,
                 'befroms' => $befroms,
                 'migrationInfo' => $migrationInfo,
+                'moods' => $moods,
             ];
 
             DB::table('cw_news')->where('catid', $this->_pclass->catid)->chunk(1000, function ($newses) use ($data) {
@@ -109,6 +110,7 @@ class MigrationNews extends Command
 
                     $newsData = DB::table('cw_news_data')->where('id', $news->id)->first();
                     $newsPosition = DB::table('cw_position_data')->select('posid')->where('id', $news->id)->get()->keyBy('posid')->keys()->toArray();
+                    $newsMood = DB::table('cw_mood')->where('contentid', $news->id)->get();
 
                     $checked = 1;
                     if( $news->status != 99){
@@ -206,6 +208,29 @@ class MigrationNews extends Command
                         'newstext' => $this->imgPathTransfer($sitePrefix, $newsData->content),
                     ];
 
+                    //插入mood表信息
+                    $moodTable = $this->_edbPrefix.'ecmsextend_mood';
+                    $moodData = [
+                        'mood1' => $newsMood->sum('n1'),
+                        'mood2' => $newsMood->sum('n2'),
+                        'mood3' => $newsMood->sum('n3'),
+                        'mood4' => $newsMood->sum('n6'),
+                        'mood5' => $newsMood->sum('n7'),
+                        'mood6' => $newsMood->sum('n8'),
+                    ];
+
+                    if(array_sum($moodData)>0){
+                        $moodData['id'] = $id;
+                        $moodData['classid'] = $this->_eclass->classid;
+
+                        if(in_array($id, $moods)){
+                            DB::table($moodTable)->where(['classid'=>$this->_eclass->classid, 'id'=>$id])->update($moodData);
+                        }else{
+                            DB::table($moodTable)->insert($moodData);
+                            $moods[] = $id;
+                        }
+                    }
+
                     //插入信息来源表（phome_enewsbefrom）信息
                     if($befrom && $news->copyfromlink && $copyfrom[0] && !in_array($copyfrom[0], $befroms)){
                         $copyfromIndexData = [
@@ -259,6 +284,7 @@ class MigrationNews extends Command
                     if(isset($migrationInfo[$news->id])){
                         DB::table($this->_mainTable)->where('id', $id)->update($mainData);
                         DB::table($this->_sideTable)->where('id', $id)->update($sideData);
+
                     }else{
                         $mainData['id'] = $id;
                         DB::table($this->_mainTable)->insert($mainData);
