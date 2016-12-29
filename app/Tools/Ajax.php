@@ -12,9 +12,7 @@ class Ajax
             'code' => $code
         );
 
-        if (!empty($data)) {
-            $out['data'] = $data;
-        }
+        $out['data'] = $data;
 
         return Response::json($out)->withHeaders(
             [

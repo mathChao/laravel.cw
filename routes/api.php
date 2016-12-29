@@ -16,3 +16,9 @@ use Illuminate\Http\Request;
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:api');
+
+Route::group(['middleware'=>'throttle:60,1', 'namespace' => 'Api'], function(){
+    Route::post('/article/hasDiggtop', 'ArticleController@getArticleHasDiggtop');
+});
+
+
