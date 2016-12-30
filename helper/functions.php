@@ -69,6 +69,12 @@ function explodea($delimiter, $string){
 
 
 function getfirstchar($s0){   //获取单个汉字拼音首字母。注意:此处不要纠结。汉字拼音是没有以U和V开头的
+
+    $special = ['玥'=>'Y'];
+    if(isset($special[$s0])){
+        return $special[$s0];
+    }
+
     $fchar = ord($s0{0});
     if($fchar >= ord("A") and $fchar <= ord("z") )return strtoupper($s0{0});
     $s1 = iconv("UTF-8","gb2312", $s0);
@@ -100,7 +106,6 @@ function getfirstchar($s0){   //获取单个汉字拼音首字母。注意:此�
     if($asc >= -11847 and $asc <= -11056) return "Y";
     if($asc >= -11055 and $asc <= -10247) return "Z";
     return NULL;
-    //return $s0;
 }
 
 function pinyin($zh){
