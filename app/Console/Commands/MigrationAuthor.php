@@ -104,8 +104,9 @@ class MigrationAuthor extends Command
                 'ispic' => empty($author->image) ? 0 : 1,
                 'lastudtime' => $timestamp,
                 'isurl' => 0,
-                'smalltext' => '',
+                'smalltext' => $author->description,
                 'stb' => 1,
+                'infozm' => pinyin($author->catname),
             ];
 
             $sideData = [
