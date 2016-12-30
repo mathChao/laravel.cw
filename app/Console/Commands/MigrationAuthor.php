@@ -69,6 +69,8 @@ class MigrationAuthor extends Command
 
         $this->output->progressStart(count($authors));
 
+        $pinyins = [];
+
         foreach($authors as $author){
             $this->output->progressAdvance();
 
@@ -89,6 +91,14 @@ class MigrationAuthor extends Command
                 $id = DB::table($this->_indexTable)->insertGetId($indexData);
             }
 
+            $pinyin= $pinyinTmp = pinyin($author->catname);
+            $i = 2;
+            while(in_array($pinyinTmp, $pinyins)){
+                $pinyinTmp = $pinyin.$i;
+                $i++;
+            }
+
+            $pinyin= $pinyinTmp;
             $mainData = [
                 'classid' => $eAuthorClass->classid,
                 'newspath' => date($eAuthorClass->newspath),
@@ -106,7 +116,7 @@ class MigrationAuthor extends Command
                 'isurl' => 0,
                 'smalltext' => $author->description,
                 'stb' => 1,
-                'infozm' => pinyin($author->catname),
+                'infozm' => $pinyin,
             ];
 
             $sideData = [
