@@ -62,10 +62,12 @@ class GenerateTags extends Command
                 $articleKeywords = explodea([',', '，'], $article->keyboard);
                 foreach($articleKeywords as $keyword){
                     if($keyword){
-                        if(isset($keywords[$keyword]) && !in_array($article, $keywords[$keyword])){
-                            $keywords[$keyword][] = $article;
+                        if(isset($keywords[$keyword])){
+                            if(!isset($keywords[$keyword][$article->id])){
+                                $keywords[$keyword][$article->id] = $article;
+                            }
                         }else{
-                            $keywords[$keyword] = [$article];
+                            $keywords[$keyword] = [$article->id => $article];
                         }
                     }
                 }
@@ -86,6 +88,7 @@ class GenerateTags extends Command
             ->toArray();
         foreach($keywords as $key => $articles){
             $this->output->progressAdvance();
+
             if(!isset($migrations[$key])){
                 $tagid = DB::table($tagsTable)->insertGetId(['tagname'=>$key, 'num'=>count($articles)]);
                 foreach($articles as $article){
