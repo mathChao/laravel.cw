@@ -20,4 +20,12 @@ class PhpcmsMigrationHelper{
         return DB::table('phpcms_migration')->where($filter)->count();
     }
 
+    public static function getNewIdFromOldId($type,$oldId){
+        $result = DB::table('phpcms_migration')->where('phpcms_id',$oldId)->where('type',$type)->select('ecms_id')->first();
+        if($result){
+            return  $result->ecms_id;
+        }
+        return null;
+    }
+
 }

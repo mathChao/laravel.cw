@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use GuzzleHttp\Client;
 use App\Tools\Ajax;
 use DB;
+use Log;
 
 class CommentController extends Controller
 {
@@ -14,37 +15,40 @@ class CommentController extends Controller
 
 	function syncCallback(Request $request)
 	{
-		$key = '2093c10c3fe2847c8d4e178b8f748a51';
-		$last_log_id = 0;
+		$key        = '2093c10c3fe2847c8d4e178b8f748a51';
+		$short_name = 'chawangzg';
+		$limit      = 20;
+
 
 		if ($this->check_signature($request->input(), $key) == false) {
 			return false;
 		}
-		$limit = 20;
+
+
+
+		$last_log_id = $this->getLastLogId();
+
+		if (empty($last_log_id)){
+			$last_log_id = 0;
+		}
 
 		$params = array(
 			'limit' => $limit,
 			'order' => 'asc',
+			'since_id' => $last_log_id,
+			'short_name' => $short_name,
 		);
 
-
-		if (!$last_log_id)
-			$last_log_id = 0;
-
-		$params['since_id'] = $last_log_id;
 		//自己找一个php的 http 库
 		$http_client = new Client();
-		$response = $http_client->request('GET', 'http://api.duoshuo.com/log/list.json', $params);
+		$response = $http_client->request('GET', 'http://api.duoshuo.com/log/list.json', [ 'query' => $params ]);
 
 		if (!isset($response['response'])) {
 			//处理错误,错误消息$response['message'], $response['code']
-			//...
-
+			Log::info($response['message'].':'.$response['code']);
 		} else {
 			//遍历返回的response，你可以根据action决定对这条评论的处理方式。
 			foreach ($response['response'] as $log) {
-
-				dd($log);
 				switch ($log['action']) {
 					case 'create':
 						//这条评论是刚创建的
