@@ -3,11 +3,14 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\ModelHelpers\CommentHelper;
+use App\Models\Comment;
 use Illuminate\Http\Request;
 use GuzzleHttp\Client;
-use App\Tools\Ajax;
 use DB;
 use Log;
+use App\ModelHelpers\PhpcmsMigrationHelper;
+use App\Models\CommentSyncLog;
 
 class CommentController extends Controller
 {
@@ -19,18 +22,11 @@ class CommentController extends Controller
 		$short_name = 'chawangzg';
 		$limit      = 20;
 
-
 		if ($this->check_signature($request->input(), $key) == false) {
 			return false;
 		}
 
-
-
 		$last_log_id = $this->getLastLogId();
-
-		if (empty($last_log_id)){
-			$last_log_id = 0;
-		}
 
 		$params = array(
 			'limit' => $limit,
@@ -51,18 +47,22 @@ class CommentController extends Controller
 			foreach ($response['response'] as $log) {
 				switch ($log['action']) {
 					case 'create':
-						//这条评论是刚创建的
+						$this->createComment($log['meta']);  // 0
 						break;
 					case 'approve':
+						$this->checkComments($log['meta'],1); // 1
 						//这条评论是通过的评论
 						break;
 					case 'spam':
+						$this->checkComments($log['meta'],-1);    // -1
 						//这条评论是标记垃圾的评论
 						break;
 					case 'delete':
+						$this->checkComments($log['meta'],-2);  // -2
 						//这条评论是删除的评论
 						break;
 					case 'delete-forever':
+						$this->deleteComments($log['meta']);  // delete
 						//彻底删除的评论
 						break;
 					default:
@@ -76,10 +76,57 @@ class CommentController extends Controller
 
 			}
 
+			// after batch dealt, then insert a log;
+			CommentSyncLog::create(['log_id' => $last_log_id, 'updatetime' => time()]);
+
 		}
 
+		return true;
 	}
 
+	protected function getLastLogId(){
+		$last_log = CommentSyncLog::orderBy('id','desc')->first();
+		if($last_log){
+			return $last_log->log_id;
+		}
+		return 0;
+	}
+
+	protected function createComment($comment){
+		$data['post_id'] = $comment['post_id'];
+		$article_id = PhpcmsMigrationHelper::getNewIdFromOldId('news',$comment['thread_key']);
+		$article_id = $article_id == null ? $comment['thread_key'] : $article_id; // 如果没有，则使用最新的id，上线之后直接使用 这个 id
+		$article = DB::table(config('cwzg.edbPrefix').'ecms_article_index')->where('id',$article_id)->first();
+		// find article
+		if($article){
+			$check = Comment::where('post_id',$comment['post_id'])->get();
+			if(count($check) !== 0 ){ // 评论已经存在了
+				return;
+			}
+			$comment = new Comment();
+			$comment->id       = $article->id;
+			$comment->classid  = $article->classid;
+			$comment->username = substr($comment['author_name'],0,64);
+			$comment->saytext  = $comment['message'];
+			$comment->checked  = 0; // 待审核
+			$comment->saytime  = strtotime($comment['created_at']);
+			$comment->sayip    = $comment['ip'];
+			$comment->post_id  = $comment['post_id'];
+			$comment->save();
+		}
+	}
+
+	protected function checkComments($comments,$status){
+		if(!empty($comments)){
+			CommentHelper::updateCommentStatus($comments,$status);
+		}
+	}
+
+	protected function deleteComments($comments){
+		if(!empty($comments)){
+			CommentHelper::deleteComments($comments);
+		}
+	}
 
 	/**
 	 *
