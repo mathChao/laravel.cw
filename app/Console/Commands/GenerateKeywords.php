@@ -58,9 +58,10 @@ class GenerateKeywords extends Command
             ->chunk(1000, function($articles)use( &$keywords ){
             foreach($articles as $article){
                 $this->output->progressAdvance();
-                $articleKeywords = explodea([',', '，'], $article->keyboard);
+                $articleKeywords = explodea([',', '，', ' '], $article->keyboard);
                 foreach($articleKeywords as $keyword){
                     if($keyword){
+                        $keyword = strtoupper($keyword);
                         if(isset($keywords[$keyword]) && !in_array($article->id, $keywords[$keyword])){
                             $keywords[$keyword][] = $article->id;
                         }else{
