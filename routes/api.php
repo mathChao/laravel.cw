@@ -19,7 +19,8 @@ Route::get('/user', function (Request $request) {
 
 Route::group(['middleware'=>'throttle:60,1', 'namespace' => 'Api'], function(){
     Route::post('/article/hasDiggtop', 'ArticleController@getArticleHasDiggtop');
-    Route::post('/comment/sync', 'Comment@syncCallback');
+    Route::post('/comment/sync', 'CommentController@syncCallback');
+    //Route::get('/comment/sync', 'CommentController@syncCallback');
 });
 
 
