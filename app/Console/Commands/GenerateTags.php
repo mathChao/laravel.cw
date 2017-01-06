@@ -62,6 +62,7 @@ class GenerateTags extends Command
                 $articleKeywords = explodea([',', '，'], $article->keyboard);
                 foreach($articleKeywords as $keyword){
                     if($keyword){
+                        $keyword = strtoupper($keyword);
                         if(isset($keywords[$keyword])){
                             if(!isset($keywords[$keyword][$article->id])){
                                 $keywords[$keyword][$article->id] = $article;
