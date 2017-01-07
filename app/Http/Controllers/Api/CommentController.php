@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\ModelHelpers\CommentHelper;
 use App\Models\Comment;
+use App\Tools\Ajax;
 use Illuminate\Http\Request;
 use GuzzleHttp\Client;
 use DB;
@@ -33,18 +34,24 @@ class CommentController extends Controller
 			'order' => 'asc',
 			'since_id' => $last_log_id,
 			'short_name' => $short_name,
+			'secret' => $key
 		);
 
 		//自己找一个php的 http 库
 		$http_client = new Client();
+
 		$response = $http_client->request('GET', 'http://api.duoshuo.com/log/list.json', [ 'query' => $params ]);
 
-		if (!isset($response['response'])) {
+		if ($response->getStatusCode() !== 200) {
 			//处理错误,错误消息$response['message'], $response['code']
 			Log::info($response['message'].':'.$response['code']);
 		} else {
 			//遍历返回的response，你可以根据action决定对这条评论的处理方式。
-			foreach ($response['response'] as $log) {
+			$result = $response->getBody()->getContents();
+			$result = \GuzzleHttp\json_decode($result,true);
+
+			foreach ($result['response'] as $log) {
+				//dd($log);
 				switch ($log['action']) {
 					case 'create':
 						$this->createComment($log['meta']);  // 0
@@ -81,7 +88,7 @@ class CommentController extends Controller
 
 		}
 
-		return true;
+		return Ajax::success(['message' => 'success']);
 	}
 
 	protected function getLastLogId(){
@@ -92,26 +99,27 @@ class CommentController extends Controller
 		return 0;
 	}
 
-	protected function createComment($comment){
-		$data['post_id'] = $comment['post_id'];
-		$article_id = PhpcmsMigrationHelper::getNewIdFromOldId('news',$comment['thread_key']);
-		$article_id = $article_id == null ? $comment['thread_key'] : $article_id; // 如果没有，则使用最新的id，上线之后直接使用 这个 id
+	protected function createComment($post){
+		//dd($comment);
+		$data['post_id'] = $post['post_id'];
+		$article_id = PhpcmsMigrationHelper::getNewIdFromOldId('news',$post['thread_key']);
+		//$article_id = $article_id == null ? $comment['thread_key'] : $article_id; // 如果没有，则使用最新的id，上线之后直接使用 这个 id
 		$article = DB::table(config('cwzg.edbPrefix').'ecms_article_index')->where('id',$article_id)->first();
 		// find article
 		if($article){
-			$check = Comment::where('post_id',$comment['post_id'])->get();
+			$check = Comment::where('post_id',$post['post_id'])->get();
 			if(count($check) !== 0 ){ // 评论已经存在了
 				return;
 			}
 			$comment = new Comment();
 			$comment->id       = $article->id;
 			$comment->classid  = $article->classid;
-			$comment->username = substr($comment['author_name'],0,64);
-			$comment->saytext  = $comment['message'];
+			$comment->username = substr($post['author_name'],0,64);
+			$comment->saytext  = $post['message'];
 			$comment->checked  = 0; // 待审核
-			$comment->saytime  = strtotime($comment['created_at']);
-			$comment->sayip    = $comment['ip'];
-			$comment->post_id  = $comment['post_id'];
+			$comment->saytime  = strtotime($post['created_at']);
+			$comment->sayip    = $post['ip'];
+			$comment->post_id  = $post['post_id'];
 			$comment->save();
 		}
 	}
@@ -140,9 +148,11 @@ class CommentController extends Controller
 		ksort($input);
 		$baseString = http_build_query($input, null, '&');
 		$expectSignature = base64_encode(hash_hmac('sha1', $baseString, $secret, true));
+
 		if ($signature !== $expectSignature) {
 			return false;
 		}
+
 		return true;
 	}
 }

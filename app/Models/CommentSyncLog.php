@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class CommentSyncLog extends Model{
 
     protected $primaryKey = 'id';
+    protected $fillable = ['log_id', 'updatetime'];
     public $timestamps = false;
 
     public function __construct(array $attributes = [])
