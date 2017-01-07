@@ -118,6 +118,9 @@ class MigrationNews extends Command
                     $newsPosition = DB::table('cw_position_data')->select('posid')->where('id', $news->id)->get()->keyBy('posid')->keys()->toArray();
                     $newsMood = DB::table('cw_mood')->where('contentid', $news->id)->get();
 
+                    $this->_mainTable = $this->_edbPrefix.'ecms_'.$this->_eclass->tbname;
+                    $this->_sideTable  = $this->_edbPrefix.'ecms_'.$this->_eclass->tbname.'_data_1';
+
                     $checked = 1;
                     if( $news->status != 99){
                         $this->_mainTable = $this->_edbPrefix.'ecms_'.$this->_eclass->tbname.'_check';
