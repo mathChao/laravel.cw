@@ -290,7 +290,9 @@ class MigrationNews extends Command
                     }
 
 
-                    if(isset($migrationInfo[$news->id])){
+                    $count = DB::table($this->_mainTable)->where('id', $id)->count();
+
+                    if($count > 0){
                         DB::table($this->_mainTable)->where('id', $id)->update($mainData);
                         DB::table($this->_sideTable)->where('id', $id)->update($sideData);
 
@@ -300,7 +302,9 @@ class MigrationNews extends Command
 
                         $sideData['id'] = $id;
                         DB::table($this->_sideTable)->insert($sideData);
+                    }
 
+                    if(!isset($migrationInfo[$news->id])){
                         //插入迁移表信息
                         $migration = [
                             'type'=>'news',
@@ -326,8 +330,8 @@ class MigrationNews extends Command
                 }
             });
 
-            $ckinfos = DB::table($this->_edbPrefix.'ecms_'.$this->_eclass->tbname.'_check')->where('classid', $this->_eclass->classid)->count();
-            $infos = DB::table($this->_edbPrefix.'ecms_'.$this->_eclass->tbname)->where('classid', $this->_eclass->classid)->count();
+            $ckinfos = DB::table($this->_indexTable)->where(['classid'=>$this->_eclass->classid, 'checked'=>0])->count();
+            $infos = DB::table($this->_indexTable)->where(['classid'=>$this->_eclass->classid, 'checked'=>1])->count();
             DB::table($this->_edbPrefix.'enewsclass')->where('classid', $this->_eclass->classid)->update(['allinfos'=>$ckinfos + $infos, 'infos'=>$infos]);
 
             $befromNum = DB::table($this->_befromTable)->count();
