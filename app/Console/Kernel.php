@@ -18,6 +18,7 @@ class Kernel extends ConsoleKernel
         'App\Console\Commands\MigrationUser',
         'App\Console\Commands\MigrationAuthor',
         'App\Console\Commands\MigrationSpecial',
+        'App\Console\Commands\MigrationComments',
         'App\Console\Commands\GenerateKeywords',
         'App\Console\Commands\GenerateTags',
     ];
