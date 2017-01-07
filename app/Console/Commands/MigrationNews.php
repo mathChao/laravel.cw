@@ -110,7 +110,7 @@ class MigrationNews extends Command
 
                     $newsData = DB::table('cw_news_data')->where('id', $news->id)->first();
 
-                    if($newsData){
+                    if(!$newsData){
                         $this->info('news '.$news->id.' does not has news data in cw_news_data');
                         continue;
                     }
