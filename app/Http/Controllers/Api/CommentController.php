@@ -16,7 +16,6 @@ use App\Models\CommentSyncLog;
 class CommentController extends Controller
 {
 
-
 	function syncCallback(Request $request)
 	{
 		$key        = '2093c10c3fe2847c8d4e178b8f748a51';
