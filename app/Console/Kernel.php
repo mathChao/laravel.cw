@@ -21,6 +21,7 @@ class Kernel extends ConsoleKernel
         'App\Console\Commands\MigrationComments',
         'App\Console\Commands\GenerateKeywords',
         'App\Console\Commands\GenerateTags',
+        'App\Console\Commands\ChangeAuthorToPinyin',
     ];
 
     /**
