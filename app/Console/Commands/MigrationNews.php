@@ -109,6 +109,12 @@ class MigrationNews extends Command
                     $this->output->progressAdvance();
 
                     $newsData = DB::table('cw_news_data')->where('id', $news->id)->first();
+
+                    if($newsData){
+                        $this->info('news '.$news->id.' does not has news data in cw_news_data');
+                        continue;
+                    }
+
                     $newsPosition = DB::table('cw_position_data')->select('posid')->where('id', $news->id)->get()->keyBy('posid')->keys()->toArray();
                     $newsMood = DB::table('cw_mood')->where('contentid', $news->id)->get();
 
