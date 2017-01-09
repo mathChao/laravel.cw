@@ -16,7 +16,7 @@ class GenerateLink extends Command
      *
      * @var string
      */
-    protected $signature = 'generate:link';
+    protected $signature = 'migrate:link';
 
     /**
      * The console command description.
