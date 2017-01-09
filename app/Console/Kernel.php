@@ -22,6 +22,7 @@ class Kernel extends ConsoleKernel
         'App\Console\Commands\GenerateKeywords',
         'App\Console\Commands\GenerateTags',
         'App\Console\Commands\ChangeAuthorToPinyin',
+        'App\Console\Commands\GenerateLink',
     ];
 
     /**
