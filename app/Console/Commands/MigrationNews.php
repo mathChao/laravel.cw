@@ -128,13 +128,6 @@ class MigrationNews extends Command
                         $checked = 0;
                     }
 
-                    if($news->id == '29386'){
-                        $this->info('checked '.$checked);
-                        $this->info('main table  '.$this->_mainTable);
-                        $this->info('side table '.$this->_sideTable );
-                        dd($news);
-                    }
-
                     //插入index表信息
                     $indexData = [
                         'classid' => $this->_eclass->classid,

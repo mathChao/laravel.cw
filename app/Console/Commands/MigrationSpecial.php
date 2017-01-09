@@ -71,7 +71,7 @@ class MigrationSpecial extends Command
             $mainData = [
                 'ztname' => $special->title,
                 'ztnum' => 25,
-                'listtempid' => 1,
+                'listtempid' => 14,
                 'ztpath' => 's/'.$special->filename,
                 'zttype' => '.html',
                 'zcid' => 1,
