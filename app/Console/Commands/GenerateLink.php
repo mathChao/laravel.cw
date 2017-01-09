@@ -69,6 +69,7 @@ class GenerateLink extends Command
             60 => 6
         ];
         foreach($links as $link){
+            $this->output->progressAdvance();
             $data = [
                 'lname'=>$link->name,
                 'lpic'=>0,
