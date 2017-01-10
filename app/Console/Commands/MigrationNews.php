@@ -103,7 +103,7 @@ class MigrationNews extends Command
                 'moods' => $moods,
             ];
 
-            DB::table('cw_news')->where('catid', $this->_pclass->catid)->chunk(1000, function ($newses) use ($data) {
+            DB::table('cw_news')->where('catid', $this->_pclass->catid)->where('copyfromlink', '!=','')->chunk(1000, function ($newses) use ($data) {
                 extract($data);
                 foreach ($newses as $news) {
                     $this->output->progressAdvance();
@@ -240,9 +240,12 @@ class MigrationNews extends Command
                         }
                     }
 
+
                     //插入信息来源表（phome_enewsbefrom）信息
+                    $copyfrom = array_map('trim', $copyfrom);
                     if($befrom && $news->copyfromlink && $copyfrom[0] && !in_array($copyfrom[0], $befroms)){
                         $befroms[] = $copyfrom[0];
+                        var_dump($befroms);
                         $copyfromIndexData = [
                             'classid' => 11,
                             'checked' => 1,
