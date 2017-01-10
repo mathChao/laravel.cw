@@ -9,7 +9,7 @@ use DB;
 use Cache;
 
 
-class GenerateLink extends Command
+class MigrationLink extends Command
 {
     /**
      * The name and signature of the console command.
