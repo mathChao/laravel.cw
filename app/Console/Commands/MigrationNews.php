@@ -242,6 +242,7 @@ class MigrationNews extends Command
 
                     //插入信息来源表（phome_enewsbefrom）信息
                     if($befrom && $news->copyfromlink && $copyfrom[0] && !in_array($copyfrom[0], $befroms)){
+                        $befroms[] = $copyfrom[0];
                         $copyfromIndexData = [
                             'classid' => 11,
                             'checked' => 1,
