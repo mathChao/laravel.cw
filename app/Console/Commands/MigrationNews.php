@@ -58,7 +58,6 @@ class MigrationNews extends Command
     {
         //
         $classname = $this->option('classname');
-        $befrom = $this->option('befrom');
 
         $this->_eclass = DB::table($this->_edbPrefix.'enewsclass')->where('classname', $classname)->first();
         $this->_pclass = DB::table('cw_category')->where('catname', $classname)->first();
@@ -84,16 +83,6 @@ class MigrationNews extends Command
                 ->get()
                 ->keyBy('phpcms_id')
                 ->toArray();
-            $befroms = DB::table($this->_befromTable)
-                ->select('title')
-                ->get('title')
-                ->keyBy('title')
-                ->keys()
-                ->toArray();
-
-            foreach($befroms as &$value){
-                $value = md5($value);
-            }
 
             $moodTable = $this->_edbPrefix.'ecmsextend_mood';
             $moods = DB::table($moodTable)->select('id')->get()->keyBy('id')->keys()->toArray();
@@ -101,8 +90,6 @@ class MigrationNews extends Command
             $data = [
                 'system' => $system,
                 'sitePrefix' => $system->newsurl ? $system->newsurl : '/',
-                'befrom' => $befrom,
-                'befroms' => $befroms,
                 'migrationInfo' => $migrationInfo,
                 'moods' => $moods,
             ];
@@ -273,26 +260,10 @@ class MigrationNews extends Command
                         ];
                         PhpcmsMigrationHelper::create($migration);
                     }
-
-                    //todo list
-                    /*
-                     * 1. titlepic 附件的处理
-                     * 2. 处理硬编码的文件路径 eg,titlepic(thumb),newstext(content),
-                     * 3. 投票的处理
-                     * 5. template 数据的搜集
-                     * 6. 置顶和头条推荐
-                     * 7. 评论的处理
-                     * 8. newstime DESC
-                     * */
+                    
                 }
             });
 
-
-            if (count($befroms) != count(array_unique($befroms))) {
-                $this->info('该数组有重复值');
-            }else{
-                $this->info('该数组没有重复值');
-            }
 
             $ckinfos = DB::table($this->_indexTable)->where(['classid'=>$this->_eclass->classid, 'checked'=>0])->count();
             $infos = DB::table($this->_indexTable)->where(['classid'=>$this->_eclass->classid, 'checked'=>1])->count();
