@@ -260,7 +260,7 @@ class MigrationNews extends Command
                         ];
                         PhpcmsMigrationHelper::create($migration);
                     }
-                    
+
                 }
             });
 

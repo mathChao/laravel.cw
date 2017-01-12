@@ -19,6 +19,7 @@ Route::get('/user', function (Request $request) {
 
 Route::group(['middleware'=>'throttle:60,1', 'namespace' => 'Api'], function(){
     Route::post('/article/hasDiggtop', 'ArticleController@getArticleHasDiggtop');
+    Route::post('/author/countInfo', 'AuthorController@getAuthorCountInfo');
     Route::post('/comment/sync', 'CommentController@syncCallback');
 });
 

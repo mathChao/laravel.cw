@@ -85,6 +85,7 @@ class MigrationUser extends Command
                 'userfen' => $member->point,
                 'money' => $member->amount,
                 'checked' => 1,
+                'actived' => 1,
             ];
 
             $eMemberSideData = [
