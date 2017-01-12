@@ -40,11 +40,12 @@ class ChangeAuthorToPinyin extends Command
 
         $authors = Author::all();
 
+        $pinyin = new Pinyin();  // 小内存型(默认)
+
         foreach($authors as $author){
-            $pinyin = new Pinyin();  // 小内存型(默认)
             $author->filename = $pinyin->convert($author->title);
             $author->filename = implode('',$author->filename);
-            $author->titleurl = str_replace($author->id,$author->filename,$author->titleurl);
+            $author->infozm   = strtoupper($pinyin->abbr($author->title));
             $author->save();
         }
 

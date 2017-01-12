@@ -15,7 +15,7 @@
                             <h3 >{{$article->title}}</h3>
 
                             <div class="img-txt" >
-                                <img src="{{$article->prefixImgTitlepic}}" >
+                                <img src="{{urlImg('131x87',$article->prefixImgTitlepic)}}" >
                                 <p >{{$article->smalltext}}</p >
                             </div >
                         </a>
