@@ -15,7 +15,7 @@ class MigrationNews extends Command
      *
      * @var string
      */
-    protected $signature = 'migrate:news {--classname=} {--befrom}';
+    protected $signature = 'migrate:news {--classname=}';
 
     /**
      * The console command description.
@@ -58,7 +58,6 @@ class MigrationNews extends Command
     {
         //
         $classname = $this->option('classname');
-        $befrom = $this->option('befrom');
 
         $this->_eclass = DB::table($this->_edbPrefix.'enewsclass')->where('classname', $classname)->first();
         $this->_pclass = DB::table('cw_category')->where('catname', $classname)->first();
@@ -84,12 +83,6 @@ class MigrationNews extends Command
                 ->get()
                 ->keyBy('phpcms_id')
                 ->toArray();
-            $befroms = DB::table($this->_befromTable)
-                ->select('title')
-                ->get('title')
-                ->keyBy('title')
-                ->keys()
-                ->toArray();
 
             $moodTable = $this->_edbPrefix.'ecmsextend_mood';
             $moods = DB::table($moodTable)->select('id')->get()->keyBy('id')->keys()->toArray();
@@ -97,8 +90,6 @@ class MigrationNews extends Command
             $data = [
                 'system' => $system,
                 'sitePrefix' => $system->newsurl ? $system->newsurl : '/',
-                'befrom' => $befrom,
-                'befroms' => $befroms,
                 'migrationInfo' => $migrationInfo,
                 'moods' => $moods,
             ];
@@ -117,6 +108,9 @@ class MigrationNews extends Command
 
                     $newsPosition = DB::table('cw_position_data')->select('posid')->where('id', $news->id)->get()->keyBy('posid')->keys()->toArray();
                     $newsMood = DB::table('cw_mood')->where('contentid', $news->id)->get();
+
+                    $this->_mainTable = $this->_edbPrefix.'ecms_'.$this->_eclass->tbname;
+                    $this->_sideTable  = $this->_edbPrefix.'ecms_'.$this->_eclass->tbname.'_data_1';
 
                     $checked = 1;
                     if( $news->status != 99){
@@ -139,7 +133,9 @@ class MigrationNews extends Command
                         $id = $migrationInfo[$news->id]->ecms_id;
                         DB::table($this->_indexTable)->where('id', $id)->update($indexData);
                     }else{
-                        $id = DB::table($this->_indexTable)->insertGetId($indexData);
+                        $indexData['id'] = $news->id;
+                        DB::table($this->_indexTable)->insertGetId($indexData);
+                        $id = $news->id;
                     }
 
                     $firsttitle = 0;
@@ -177,6 +173,7 @@ class MigrationNews extends Command
                     }
 
                     $copyfrom = explode('|', $newsData->copyfrom);
+                    $copyfrom = array_map('trim', $copyfrom);
                     //向news主表插入信息
                     $mainData = [
                         'classid' => $this->_eclass->classid,
@@ -237,57 +234,9 @@ class MigrationNews extends Command
                         }
                     }
 
-                    //插入信息来源表（phome_enewsbefrom）信息
-                    if($befrom && $news->copyfromlink && $copyfrom[0] && !in_array($copyfrom[0], $befroms)){
-                        $copyfromIndexData = [
-                            'classid' => 11,
-                            'checked' => 1,
-                            'newstime' => $news->inputtime,
-                            'truetime' => $news->inputtime,
-                            'lastdotime' => $news->updatetime,
-                            'havehtml' => 0,
-                        ];
-                        $copyfromid = DB::table($this->_edbPrefix.'ecms_copyfrom_index')->insertGetId($copyfromIndexData);
+                    $count = DB::table($this->_mainTable)->where('id', $id)->count();
 
-
-                        $copyfromUrl = '';
-                        if(strpos($news->copyfromlink, 'mp.weixin.qq.com') === false){
-                            if( ($len = strpos($news->copyfromlink, '.com')) !== false){
-                                $copyfromUrl = substr($news->copyfromlink, 0, $len + 4);
-                            }elseif( ($len = strpos($news->copyfromlink, '.cn')) !== false){
-                                $copyfromUrl = substr($news->copyfromlink, 0, $len + 3);
-                            }
-                        }
-
-                        $copyfromMainData = [
-                            'id' => $copyfromid,
-                            'classid' => $this->_befrom_class->classid,
-                            'newspath' => date($this->_befrom_class->newspath),
-                            'newstime' => $news->inputtime,
-                            'truetime' => $news->inputtime,
-                            'lastdotime' => $news->updatetime,
-                            'ismember' => 0,
-                            'smalltext' => 0,
-                            'titleurl' => $copyfromUrl,
-                            'filename' => $copyfromid,
-                            'title' => $copyfrom[0],
-                            'ispic' => 0,
-                            'isurl' => 1,
-                            'stb' => 1,
-                        ];
-                        DB::table($this->_edbPrefix.'ecms_copyfrom')->insert($copyfromMainData);
-
-                        $copyfromSideData = [
-                            'id' => $copyfromid,
-                            'classid' => $this->_befrom_class->classid,
-                        ];
-                        DB::table($this->_edbPrefix.'ecms_copyfrom_data_1')->insert($copyfromSideData);
-
-                        $befroms[] = $copyfrom[0];
-                    }
-
-
-                    if(isset($migrationInfo[$news->id])){
+                    if($count > 0){
                         DB::table($this->_mainTable)->where('id', $id)->update($mainData);
                         DB::table($this->_sideTable)->where('id', $id)->update($sideData);
 
@@ -297,7 +246,9 @@ class MigrationNews extends Command
 
                         $sideData['id'] = $id;
                         DB::table($this->_sideTable)->insert($sideData);
+                    }
 
+                    if(!isset($migrationInfo[$news->id])){
                         //插入迁移表信息
                         $migration = [
                             'type'=>'news',
@@ -309,22 +260,13 @@ class MigrationNews extends Command
                         ];
                         PhpcmsMigrationHelper::create($migration);
                     }
-
-                    //todo list
-                    /*
-                     * 1. titlepic 附件的处理
-                     * 2. 处理硬编码的文件路径 eg,titlepic(thumb),newstext(content),
-                     * 3. 投票的处理
-                     * 5. template 数据的搜集
-                     * 6. 置顶和头条推荐
-                     * 7. 评论的处理
-                     * 8. newstime DESC
-                     * */
+                    
                 }
             });
 
-            $ckinfos = DB::table($this->_edbPrefix.'ecms_'.$this->_eclass->tbname.'_check')->where('classid', $this->_eclass->classid)->count();
-            $infos = DB::table($this->_edbPrefix.'ecms_'.$this->_eclass->tbname)->where('classid', $this->_eclass->classid)->count();
+
+            $ckinfos = DB::table($this->_indexTable)->where(['classid'=>$this->_eclass->classid, 'checked'=>0])->count();
+            $infos = DB::table($this->_indexTable)->where(['classid'=>$this->_eclass->classid, 'checked'=>1])->count();
             DB::table($this->_edbPrefix.'enewsclass')->where('classid', $this->_eclass->classid)->update(['allinfos'=>$ckinfos + $infos, 'infos'=>$infos]);
 
             $befromNum = DB::table($this->_befromTable)->count();
