@@ -67,6 +67,31 @@ function explodea($delimiter, $string){
     }
 }
 
+function urlImg($size, $name, $type = 1, $quality = 90)
+{
+    if (!isset ($size)) {
+        return false;
+    }
+
+    if(empty($name)){
+        $name = Config::get('image.default_pic');
+    }
+
+    $rate = Config::get('image.default_rate');
+
+    list($width,$height) = explode('x',$size);
+
+    $preset = [
+        'width'   => floor((int)$width * $rate),
+        'height'  => floor((int)$height * $rate),
+        'type'    => (int)$type,
+        'quality' => (int)$quality,
+    ];
+
+    $url =  app('Image')->getUrl($preset, $name);
+
+    return $url;
+}
 
 function getfirstchar($s0){   //获取单个汉字拼音首字母。注意:此处不要纠结。汉字拼音是没有以U和V开头的
 
