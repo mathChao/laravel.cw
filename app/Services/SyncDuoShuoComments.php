@@ -10,7 +10,7 @@ use DB;
 use Illuminate\Support\Facades\Config;
 use GuzzleHttp\Client;
 use Log;
-use Mockery\CountValidator\Exception;
+use Illuminate\Database\QueryException;
 
 class SyncDuoShuoComments
 {
@@ -115,16 +115,15 @@ class SyncDuoShuoComments
                 $comment = new Comment();
                 $comment->id       = $article->id;
                 $comment->classid  = $article->classid;
-                $comment->username = substr(str_replace('\xE5','',$post['author_name']),0,30);
+                $comment->username = substr($post['author_name'],0,30);
                 $comment->saytext  = $post['message'];
                 $comment->checked  = 0; // 待审核
                 $comment->saytime  = strtotime($post['created_at']);
                 $comment->sayip    = $post['ip'];
                 $comment->post_id  = $post['post_id'];
                 $comment->save();
-            } catch (Exception $e) {
+            } catch (QueryException $e) {
                 Log::info('data error,can not save'.$e->getMessage());
-            } finally{
             }
         }
     }
