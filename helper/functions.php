@@ -47,17 +47,21 @@ function clearImageSizeSet($str){
     return preg_replace($pattern, '$1$3', $str);
 }
 
-function imageAddPrefix($str, $prefix = null, $filePrefix = null){
-    if($prefix || $filePrefix){
-        $pattern = '/(http:.+?)?\/d\/file(\/uploadfile\/\d{4}\/\d{4}\/)(\w+?)\.(jpg|png|jpeg|gif|bmp)/';
-        //preg_match_all($pattern, $str, $match);
-        //dd($match);
-        $str = preg_replace($pattern, $prefix.'$2'.$filePrefix.'$3.$4', $str);
+function textImageHandler($str, $callback = null, $arguments = []){
+    $pattern = '/<img.+?src=([\'|\"])(.+?)\1/i';
+    if(is_callable($callback) && preg_match_all($pattern, $str, $match) && isset($match[2])){
+        foreach($match[2] as $value){
+            $arg = $arguments;
+            $arg[] = $value;
+            $find = $value;
+            $replace = call_user_func_array($callback, $arg);
+            $str = str_replace($find, $replace, $str);
+        }
     }
     return $str;
 }
 
-function explodea($delimiter, $string){
+function array_explode($delimiter, $string){
     if(is_string($delimiter)){
         return explode($delimiter, $string);
     }elseif(is_array($delimiter)){

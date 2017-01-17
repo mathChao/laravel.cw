@@ -32,6 +32,8 @@ class NewsController extends Controller{
         if($ttid != 12){
             if($ttid == 34){
                 $filter['firsttitle >'] = 0;
+            }elseif($ttid == 2){
+                $filter['isgood'] = 5;
             }else{
                 $filter['ttid'] = $ttid;
             }
@@ -71,6 +73,8 @@ class NewsController extends Controller{
         if($post['ttid'] != '12'){
             if($post['ttid'] == 34){
                 $filter['firsttitle >'] = 0;
+            }elseif($post['ttid'] == 2){
+                $filter['isgood'] = 5;
             }else{
                 $filter['ttid'] = $post['ttid'];
             }
@@ -92,6 +96,7 @@ class NewsController extends Controller{
         $articles = ArticleHelper::articleSearch($filter, $pageRow, $post['page'], $orderBy);
 
         foreach($articles as &$article){
+            $article->titlepic = urlImg('131x87', $article->titlepic);
             $article = $article->toArray();
         }
 
@@ -109,15 +114,21 @@ class NewsController extends Controller{
 
         $class = EnewsclassHelper::getClassInfo($article->classid);
 
-        clearImageSizeSet($article->newstext);
-
         return view('content', [
             'article' => $article,
+            'moodConfig' => $article->getArticleMoodConfig(),
             'related' => $article->getRelatedArticle(),
             'title' => $article->title.'-'.config('cwzg.sitename'),
             'keywords' => $article->keyboard,
+            'description' => $article->smalltext,
             'class' => $class,
             'ttid' => Session::has('ttid') ? Session::get('ttid') : 12,
         ]);
+    }
+
+    public function AjaxNewsMoodClick(Request $request){
+        if(!$request->mood || !$request->id){
+
+        }
     }
 }

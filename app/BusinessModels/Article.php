@@ -4,6 +4,7 @@ namespace App\BusinessModels;
 
 use App\Models\Article as DbArticle;
 use App\ModelHelpers\ArticleHelper;
+use App\ModelHelpers\TagHelper;
 
 use Cache;
 use DB;
@@ -28,6 +29,7 @@ class Article extends Model{
             if($this->model){
                 $sideTable = config('cwzg.edbPrefix').'ecms_article_data_'.$this->model->stb;
                 $result = (array) DB::table($sideTable)->where('id', $this->id)->get()->toArray()[0];
+                $result['newstext'] = $this->articleNewstextHandler($result['newstext']);
             }
             return $result;
         });
@@ -35,12 +37,9 @@ class Article extends Model{
 
     public function getRelatedArticle(){
         $ids = [];
-        $keywords = explode(',', $this->model->keyboard);
+        $keywords = array_explode([',', '，', ' ', '　'], $this->model->keyboard);
         foreach($keywords as $keyword){
-            $cacheId = getKeywordsCacheId($keyword);
-            if($keyword && Cache::has($cacheId)){
-                $ids = array_merge($ids, Cache::get($cacheId));
-            }
+            $ids = array_merge($ids, TagHelper::getTagArticleIds(strtoupper($keyword)));
         }
 
         $ids = array_unique($ids);
@@ -51,30 +50,51 @@ class Article extends Model{
         return ArticleHelper::articleSearch($filter, 3, null, 'newstime desc');
     }
 
-    public function getImagePrefixTitlePic(){
-        $cacheId = 'article-titlepic-image-prefix'.$this->model->id;
+    public function getArticleMood(){
+        $cacheId = 'article-mood-'.$this->id;
         return Cache::remember($cacheId, CACHE_TIME, function(){
-            return imageAddPrefix($this->model->titlepic, config('cwzg.imageUrl'), 'thumb_131_87_');
+            $results = DB::table(config('cwzg.edbPrefix').'ecmsextend_mood')->where('id', $this->id)->get();
+            return [
+                'mood1'=>$results->sum('mood1'),
+                'mood2'=>$results->sum('mood2'),
+                'mood3'=>$results->sum('mood3'),
+                'mood4'=>$results->sum('mood4'),
+                'mood5'=>$results->sum('mood5'),
+                'mood6'=>$results->sum('mood6'),
+                'mood7'=>$results->sum('mood7'),
+                'mood8'=>$results->sum('mood8'),
+                'mood9'=>$results->sum('mood9'),
+                'mood10'=>$results->sum('mood10'),
+                'mood11'=>$results->sum('mood11'),
+                'mood12'=>$results->sum('mood12'),
+            ];
         });
     }
 
-    public function getImagePrefixNewstext(){
-        $cacheId = 'article-newtext-image-prefix'.$this->model->id;
-        return Cache::remember($cacheId, CACHE_TIME, function(){
-            return imageAddPrefix($this->attributes['newstext'], config('cwzg.imageUrl'), 'thumb_220_0_');
-        });
+    public function getArticleMoodConfig(){
+        $height = 44;
+        $moodsConfig = config('cwzg.mood');
+        $mood = $this->getArticleMood();
+        $max = max($mood);
+        foreach($moodsConfig as $key => &$config){
+            $config['mood'] = $mood[$key];
+            $config['height'] = $height * ($mood[$key]/$max);
+        }
+        return $moodsConfig;
+    }
+
+    public function articleNewstextHandler($newstext){
+        $newtext = clearImageSizeSet($newstext);
+        $newtext = textImageHandler($newtext, 'urlImg', ['220x128']);
+        return $newtext;
     }
 
     protected function asynLoad1(){
         $this->attributes['url'] = '/info/'.$this->model->id;
-        $this->attributes['prefixImgTitlepic'] = $this->getImagePrefixTitlePic();
     }
 
     protected function asynLoad2(){
-        $this->attributes = array_merge($this->attributes, $this->getArticleData());
-        $this->attributes['prefixImgNewtext'] = $this->getImagePrefixNewstext();
+        $this->attributes = array_merge($this->attributes, $this->getArticleData(), $this->getArticleMood());
     }
-
-
 
 }

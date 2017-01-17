@@ -21,8 +21,9 @@ Route::get('/list/{ttid?}/{classid?}/', 'NewsController@newsList');
 
 Route::get('/info/{id}/', 'NewsController@newsInfo');
 
+Route::get('/home', 'HomeController@index');
+
 Route::post('/ajax/list/load', 'NewsController@AjaxNewsListLoad');
 
-Route::get('/ajax/newsInfo/', 'NewsController@AjaxNewsInfo');
+Route::post('/ajax/news/mood/', 'NewsController@AjaxNewsMoodClick');
 
-Route::get('/home', 'HomeController@index');

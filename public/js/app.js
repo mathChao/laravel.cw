@@ -14,7 +14,7 @@ $(function(){
         content += '<a href="'+article.url+'">';
         content += '<h3 >'+article.title+'</h3>';
         content += '<div class="img-txt" >';
-        content += '<img src="'+article.prefixImgTitlepic+'" >';
+        content += '<img src="'+article.titlepic+'" >';
         content += '<p>'+article.smalltext+'</p >';
         content += '</div >';
         content += '</a >';
@@ -103,6 +103,19 @@ $(function(){
         }
     }
 
+    function AjaxMoodClick($this){
+        var request = $.ajax({
+            url: '/ajax/news/mood/',
+            method: 'post',
+            async: 'false',
+            dataType: 'json',
+            data: {
+                id : $this.data('id'),
+                mood : $this.val(),
+            }
+        });
+    }
+
     var $content = $('.p-content');
     if($content.length){
         var html = '';
@@ -113,6 +126,10 @@ $(function(){
             $article.empty();
             $article.append($(html));
             $('.js-article-content-load—wrap').css('display', 'none');
+        });
+
+        $content.on('click', '.js-mood', function(){
+            AjaxMoodClick($(this));
         });
     }
 });
