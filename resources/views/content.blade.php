@@ -39,7 +39,7 @@
             <li class="js-mood-list">
                 <span>{{$value['mood']}}</span>
                 <div class="js-pillar pillar{{$value['pillar']}}" style="height:{{$value['height']}}px;"></div>
-                <img src="{{$value['img']}}"><br>
+                <img src="{{url($value['img'])}}"><br>
                 <label for="{{$key}}">{{$value['name']}}<br>
                     <input class="js-mood" type="radio" id="{{$key}}" name="mood" value="{{$key}}" data-id="{{$article->id}}">
                 </label>

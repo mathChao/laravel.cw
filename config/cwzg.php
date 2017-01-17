@@ -11,32 +11,32 @@ return [
     'mood' => [
         'mood1'=>[
             'name'=>'震惊',
-            'img'=>url('/image/a1.gif'),
+            'img'=>'/image/a1.gif',
             'pillar'=>'2',
         ],
         'mood2'=>[
             'name'=>'不解',
-            'img'=>url('/image/a2.gif'),
+            'img'=>'/image/a2.gif',
             'pillar'=>'2',
         ],
         'mood3'=>[
             'name'=>'愤怒',
-            'img'=>url('/image/a3.gif'),
+            'img'=>'/image/a3.gif',
             'pillar'=>'2',
         ],
         'mood4'=>[
             'name'=>'高兴',
-            'img'=>url('/image/a6.gif'),
+            'img'=>'/image/a6.gif',
             'pillar'=>'1',
         ],
         'mood5'=>[
             'name'=>'支持',
-            'img'=>url('/image/a7.gif'),
+            'img'=>'/image/a7.gif',
             'pillar'=>'1',
         ],
         'mood6'=>[
             'name'=>'超赞',
-            'img'=>url('/image/a8.gif'),
+            'img'=>'/image/a8.gif',
             'pillar'=>'1',
         ],
     ],

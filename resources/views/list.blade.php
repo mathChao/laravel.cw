@@ -10,16 +10,18 @@
                 </h2>
                 @endif
                 @foreach($articles as $article)
-                    <section>
-                        <a href="{{url($article->url)}}">
-                            <h3 >{{$article->title}}</h3>
+                    @if(!$article->isEmpty())
+                        <section>
+                            <a href="{{url($article->url)}}">
+                                <h3 >{{$article->title}}</h3>
 
-                            <div class="img-txt" >
-                                <img src="{{urlImg('131x87',$article->titlepic)}}" >
-                                <p >{{$article->smalltext}}</p >
-                            </div >
-                        </a>
-                    </section>
+                                <div class="img-txt" >
+                                    <img src="{{urlImg('131x87',$article->titlepic)}}" >
+                                    <p >{{$article->smalltext}}</p >
+                                </div >
+                            </a>
+                        </section>
+                    @endif
                 @endforeach
             </section>
             <div >
