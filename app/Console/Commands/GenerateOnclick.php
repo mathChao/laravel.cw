@@ -81,7 +81,7 @@ class GenerateOnclick extends Command
                     $moodSum = array_sum((array) $mood);
                 }
 
-                $onclick = rand(120, 150) + $article->plnum * 20 + $moodSum *10;
+                $onclick = rand(100, 150) + $article->plnum * 20 + $moodSum *10;
                 DB::table($articleTable)->where('id', $article->id)->update(['onclick'=>$onclick]);
             }
         });
