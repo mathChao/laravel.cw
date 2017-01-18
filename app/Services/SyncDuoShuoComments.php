@@ -82,7 +82,8 @@ class SyncDuoShuoComments
                 }
 
             }
-
+            // 批量更新评论数量
+            CommentHelper::updateCommentCount();
             // after batch dealt, then insert a log;
             CommentSyncLog::create(['log_id' => $last_log_id, 'updatetime' => time()]);
 
