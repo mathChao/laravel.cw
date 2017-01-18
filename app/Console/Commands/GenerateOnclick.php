@@ -86,7 +86,6 @@ class GenerateOnclick extends Command
             }
         });
 
-
         $this->output->progressFinish();
     }
 }

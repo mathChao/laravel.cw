@@ -99,6 +99,14 @@ class MigrationAuthor extends Command
             }
 
             $pinyin= $pinyinTmp;
+
+            $descArr = explode('|||', $author->description);
+            $ftitle = $description = $author->description;
+            if(isset($descArr[1])){
+                $ftitle = $descArr[0];
+                $description = $descArr[1];
+            }
+
             $mainData = [
                 'classid' => $eAuthorClass->classid,
                 'newspath' => date($eAuthorClass->newspath),
@@ -114,14 +122,15 @@ class MigrationAuthor extends Command
                 'ispic' => empty($author->image) ? 0 : 1,
                 'lastudtime' => $timestamp,
                 'isurl' => 0,
-                'smalltext' => $author->description,
+                'smalltext' => $description,
                 'stb' => 1,
                 'infozm' => $pinyin,
+                'ftitle' => $ftitle,
             ];
 
             $sideData = [
                 'classid' => $eAuthorClass->classid,
-                'description' => $author->description,
+                'description' => $description,
             ];
 
             if(isset($migrationInfo[$author->catid])){
