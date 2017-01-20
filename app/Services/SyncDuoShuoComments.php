@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\ModelHelpers\CommentHelper;
 use App\Models\Comment;
-use App\ModelHelpers\PhpcmsMigrationHelper;
 use App\Models\CommentSyncLog;
 use DB;
 use Illuminate\Support\Facades\Config;

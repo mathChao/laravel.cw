@@ -12,7 +12,7 @@ class SyncComment extends Command
      *
      * @var string
      */
-    protected $signature = 'sync:comment';
+    protected $signature = 'sync:comment {number=1000}';
 
     /**
      * The console command description.
@@ -39,12 +39,16 @@ class SyncComment extends Command
     public function handle()
     {
         $handler  = new SyncDuoShuoComments();
-        $result = $handler->syncComment(5000);
+        $number = $this->argument('number');
 
-        if($result['result'] === 'success'){
-            $this->info('success:'.$result['number']);
-        }else{
-            $this->info('fail:'.$result['error']);
+        while($number){
+            $result = $handler->syncComment($number);
+            if($result['result'] === 'success'){
+                $this->info('success:'.$result['number']);
+            }else{
+                $this->info('fail:'.$result['error']);
+            }
+            $number = $result['number'];
         }
     }
 
