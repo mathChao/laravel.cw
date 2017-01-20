@@ -33,20 +33,21 @@
         @endif
     </div>
 
-    <div class="mood">
-        <ul>
-            @foreach($moodConfig as $key => $value)
-            <li class="js-mood-list">
-                <span>{{$value['mood']}}</span>
-                <div class="js-pillar pillar{{$value['pillar']}}" style="height:{{$value['height']}}px;"></div>
-                <img src="{{url($value['img'])}}"><br>
-                <label for="{{$key}}">{{$value['name']}}<br>
-                    <input class="js-mood" type="radio" id="{{$key}}" name="mood" value="{{$key}}" data-id="{{$article->id}}">
-                </label>
-            </li>
-            @endforeach
-        </ul>
-    </div>
+    {{--<div class="mood">--}}
+        {{--<ul>--}}
+            {{--@foreach($moodConfig as $key => $value)--}}
+                {{--<label for="{{$key}}">--}}
+                    {{--<li class="js-mood-list">--}}
+                        {{--<span>{{$value['mood']}}</span>--}}
+                        {{--<div class="js-pillar pillar{{$value['pillar']}}" style="height:{{$value['height']}}px;"></div>--}}
+                        {{--<img src="{{url($value['img'])}}"><br>--}}
+                        {{--{{$value['name']}}<br>--}}
+                            {{--<input class="js-mood" type="radio" id="{{$key}}" name="mood" value="{{$key}}" data-id="{{$article->id}}">--}}
+                    {{--</li>--}}
+                {{--</label>--}}
+            {{--@endforeach--}}
+        {{--</ul>--}}
+    {{--</div>--}}
 
 
     <!-- 多说评论框 start -->

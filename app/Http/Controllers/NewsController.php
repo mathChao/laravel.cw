@@ -127,8 +127,15 @@ class NewsController extends Controller{
     }
 
     public function AjaxNewsMoodClick(Request $request){
+        $result = [
+            'success' => false,
+            'message' => ''
+        ];
         if(!$request->mood || !$request->id){
-
+            $result['message'] = 'data error';
+            return Ajax::argumentsError($result);
         }
+
+        return Ajax::success($result);
     }
 }

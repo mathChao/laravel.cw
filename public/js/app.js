@@ -106,13 +106,17 @@ $(function(){
     function AjaxMoodClick($this){
         var request = $.ajax({
             url: '/ajax/news/mood/',
-            method: 'post',
+            method: 'POST',
             async: 'false',
             dataType: 'json',
             data: {
                 id : $this.data('id'),
-                mood : $this.val(),
+                mood : $this.val()
             }
+        });
+
+        request.done(function(result){
+            console.log(result);
         });
     }
 
@@ -127,8 +131,11 @@ $(function(){
             $article.append($(html));
             $('.js-article-content-load—wrap').css('display', 'none');
         });
+    }
 
-        $content.on('click', '.js-mood', function(){
+    var $mood = $('.mood');
+    if($mood.length){
+        $mood.on('click', '.js-mood', function(){
             AjaxMoodClick($(this));
         });
     }
