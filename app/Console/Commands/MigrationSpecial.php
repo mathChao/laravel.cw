@@ -135,6 +135,6 @@ class MigrationSpecial extends Command
     }
 
     private function imgPathTransfer($sitePrefix, $str){
-        return str_replace('http://www.cwzg.cn/uploadfile', 'http://static.cwzg.webbig.cn/p', $str);
+        return str_replace('http://www.cwzg.cn/uploadfile', 'http://static.cwzg.cn/p', $str);
     }
 }
