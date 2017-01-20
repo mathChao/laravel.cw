@@ -39,7 +39,7 @@ class SyncComment extends Command
     public function handle()
     {
         $handler  = new SyncDuoShuoComments();
-        $result = $handler->syncComment(1000);
+        $result = $handler->syncComment(5000);
 
         if($result === true){
             $this->info('success');

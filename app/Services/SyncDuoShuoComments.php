@@ -102,11 +102,8 @@ class SyncDuoShuoComments
 
     protected function createComment($post){
         //dd($comment);
-        $data['post_id'] = $post['post_id'];
-        $article_id = PhpcmsMigrationHelper::getNewIdFromOldId('news',$post['thread_key']);
-        //$article_id = $article_id == null ? $comment['thread_key'] : $article_id; // 如果没有，则使用最新的id，上线之后直接使用 这个 id
-        $article = DB::table(config('cwzg.edbPrefix').'ecms_article_index')->where('id',$article_id)->first();
         // find article
+        $article = DB::table(config('cwzg.edbPrefix').'ecms_article_index')->where('id',$post['thread_key'])->first();
         if($article){
             $check = Comment::where('post_id',$post['post_id'])->get();
             if(count($check) !== 0 ){ // 评论已经存在了
