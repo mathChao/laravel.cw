@@ -2,7 +2,7 @@
 
 function cacheTagTransfer($var){
     if(is_array($var) || is_object($var)){
-        return json_encode($var);
+        return md5($var);
     }elseif(is_string($var)){
         return str_replace(' ', '-', $var);
     }else{
