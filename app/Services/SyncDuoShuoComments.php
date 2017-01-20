@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\ModelHelpers\CommentHelper;
 use App\Models\Comment;
-use App\ModelHelpers\PhpcmsMigrationHelper;
 use App\Models\CommentSyncLog;
 use DB;
 use Illuminate\Support\Facades\Config;
@@ -44,12 +43,12 @@ class SyncDuoShuoComments
         if ($response->getStatusCode() !== 200) {
             //处理错误,错误消息$response['message'], $response['code']
             Log::info($response['message'].':'.$response['code']);
-            return $response['code'];
+            return ['result' => 'fail','error'=> $response['code']];
         } else {
             //遍历返回的response，你可以根据action决定对这条评论的处理方式。
             $result = $response->getBody()->getContents();
             $result = \GuzzleHttp\json_decode($result,true);
-
+            $number = count($result['response']);
             foreach ($result['response'] as $log) {
                 //dd($log);
                 switch ($log['action']) {
@@ -89,7 +88,7 @@ class SyncDuoShuoComments
 
         }
 
-        return true;
+        return ['result' => 'success','number' => $number];
     }
 
     protected function getLastLogId(){

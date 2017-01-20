@@ -20,8 +20,8 @@ class CommentController extends Controller
 
 		$result = $handler->syncComment(20);
 
-		if($result === true){
-			return Ajax::success(['message' => 'success']);
+		if($result['result'] == 'success'){
+			return Ajax::success(['message' => 'success','number' => $result['number']]);
 		}else{
 			return Ajax::serverError($result);
 		}
