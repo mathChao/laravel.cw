@@ -29,7 +29,7 @@ class CommentHelper{
                 (select p.id,count(p.id) as num from '.$prefix.'ecms_article a INNER JOIN '.$prefix.'enewspl_1 p
                 on a.id = p.id where p.checked =1  GROUP BY id) as cb
                 on ca.id = cb.id set ca.plnum = cb.num;';
-        DB::raw($sql);
+        DB::update($sql);
     }
 
 }
