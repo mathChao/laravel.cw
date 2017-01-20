@@ -10,11 +10,11 @@ return [
     */
 
     'setting' => [
-        'host' => 'http://static.cwzg.webbig.cn',
+        'host' => 'http://static.cwzg.cn',
         'key'  => 'cwzg',
     ],
 
-    'default_pic'=> 'http://static.cwzg.webbig.cn/skin/images/nophoto.jpg',
+    'default_pic'=> 'http://static.cwzg.cn/skin/images/nophoto.jpg',
     'default_rate'=> 1.2
 
 ];
