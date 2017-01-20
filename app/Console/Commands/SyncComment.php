@@ -41,10 +41,10 @@ class SyncComment extends Command
         $handler  = new SyncDuoShuoComments();
         $result = $handler->syncComment(5000);
 
-        if($result === true){
-            $this->info('success');
+        if($result['result'] === 'success'){
+            $this->info('success:'.$result['number']);
         }else{
-            $this->info('fail');
+            $this->info('fail:'.$result['error']);
         }
     }
 
