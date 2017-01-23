@@ -7,39 +7,8 @@ class CommonComposer{
 
     public function compose(View $view)
     {
-        $navigation = [
-            '首页' => [
-                'ttid' => 12,
-                'url' => '/'
-            ],
-
-            '头条' => [
-                'ttid' => 34,
-                'url' => '/list/34/',
-            ],
-
-            '智库' => [
-                'ttid' => 4,
-                'url' => '/list/4/',
-            ],
-
-            '时评' => [
-                'ttid' => 3,
-                'url' => '/list/3/',
-            ],
-
-            '深度' => [
-                'ttid' => 2,
-                'url' => '/list/2/',
-            ],
-
-            '争鸣' => [
-                'ttid' => 5,
-                'url' => '/list/5/'
-            ],
-        ];
-
-
+        $navigation = config('cwzg.navigation');
+        
         $site = [
             'name' => config('cwzg.sitename'),
             'keywords' => config('cwzg.keywords'),

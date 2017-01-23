@@ -32,7 +32,8 @@ $(function(){
             data: {
                 page : listPage,
                 ttid : $this.data('ttid'),
-                classid : $this.data('classid')
+                classid : $this.data('classid'),
+                key : $this.data('key')
             }
         });
 

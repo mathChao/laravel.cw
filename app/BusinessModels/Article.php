@@ -90,7 +90,9 @@ class Article extends Model{
     }
 
     protected function asynLoad1(){
-        $this->attributes['url'] = '/info/'.$this->model->id;
+        $classMap = config('cwzg.classMap');
+        $classUrlName = isset($classMap[$this->model->classid]) ? $classMap[$this->model->classid]['name_en'].'/' : '';
+        $this->attributes['url'] = '/'.$classUrlName.(date('Ym')).'/'.$this->model->id.'.html';
     }
 
     protected function asynLoad2(){
