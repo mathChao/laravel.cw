@@ -84,6 +84,7 @@ class Article extends Model{
     }
 
     public function articleNewstextHandler($newstext){
+        $newstext = stripslashes($newstext);
         $newtext = clearImageSizeSet($newstext);
         $newtext = textImageHandler($newtext, 'urlImg', ['220x128']);
         return $newtext;
