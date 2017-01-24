@@ -21,6 +21,7 @@ Route::group(['middleware'=>'throttle:60,1', 'namespace' => 'Api'], function(){
     Route::post('/article/hasDiggtop', 'ArticleController@getArticleHasDiggtop');
     Route::post('/author/countInfo', 'AuthorController@getAuthorCountInfo');
     Route::post('/comment/sync', 'CommentController@syncCallback');
+    Route::get('/article/addClick/{cid}/{id}', 'ArticleController@addClick');
 });
 
 
