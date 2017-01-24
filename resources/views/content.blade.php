@@ -68,5 +68,5 @@
         })();
     </script>
     <!-- 多说公共JS代码 end -->
-
+    <script type="text/javascript" src="{{ url('api/article/addClick/ ' . $article->classid . '/' . $article->id ) }}"></script>
 @endsection
