@@ -78,7 +78,7 @@ class Article extends Model{
         $max = max($mood);
         foreach($moodsConfig as $key => &$config){
             $config['mood'] = $mood[$key];
-            $config['height'] = $height * ($mood[$key]/$max);
+            $config['height'] = $max ? $height * ($mood[$key]/$max) : 0;
         }
         return $moodsConfig;
     }
