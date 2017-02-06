@@ -34,4 +34,10 @@ class ArticleController extends Controller{
         return Ajax::success($result);
 
     }
+
+    function addClick($cid,$id){
+        $dbPrefix = config('cwzg.edbPrefix');
+        DB::update('update '. $dbPrefix . 'ecms_article set onclick = onclick + 1 where classid = '. $cid . ' and id = '. $id);
+        return ;
+    }
 }

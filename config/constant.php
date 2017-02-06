@@ -2,7 +2,7 @@
 
 /*site define*/
 define('HOST_NAME',env('ENV_HOST_NAME'));
-define('CACHE_TIME', 1440);
+define('CACHE_TIME', 1);
 define('SHORT_CACHE_TIME', 10);
 
 /* base path */

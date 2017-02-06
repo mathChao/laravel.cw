@@ -14,5 +14,10 @@ class Enewsclass extends Model{
             return DbEnewsclass::find($id);
         });
     }
+    
+    public function asynLoad1(){
+        $classMap = config('cwzg.classMap');
+        $this->attributes['url'] = isset($classMap[$this->model->classid]) ? $classMap[$this->model->classid]['url'] : '/';
+    }
 
 }

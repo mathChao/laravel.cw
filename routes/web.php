@@ -15,15 +15,21 @@ Route::get('/', function(){
     return view('welcome');
 });
 
-Route::get('/', 'NewsController@newsList');
+Route::get('/', 'NewsController@index');
+Route::get('/headline/', 'NewsController@headline');
+Route::get('/thinktank/', 'NewsController@thinktank');
+Route::get('/opinion/', 'NewsController@opinion');
+Route::get('/view/', 'NewsController@view');
+Route::get('/debate/', 'NewsController@debate');
 
-Route::get('/list/{ttid?}/{classid?}/', 'NewsController@newsList');
+Route::get('/politics/', 'NewsController@politics');
+Route::get('/expose/', 'NewsController@expose');
+Route::get('/theory/', 'NewsController@theory');
+Route::get('/history/', 'NewsController@history');
+Route::get('/photos/', 'NewsController@photos');
 
-Route::get('/info/{id}/', 'NewsController@newsInfo');
-
-Route::get('/home', 'HomeController@index');
+Route::get('/{type}/{time}/{id}.html', 'NewsController@newsInfo');
 
 Route::post('/ajax/list/load', 'NewsController@AjaxNewsListLoad');
-
 Route::post('/ajax/news/mood/', 'NewsController@AjaxNewsMoodClick');
 

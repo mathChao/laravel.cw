@@ -12,6 +12,7 @@
         <title>{{ $title or $site['name'] }}</title>
         <script type="text/javascript" src="/lib/jquery/jquery-1.11.1.min.js" charset="utf-8"></script>
         <link href="/css/phone.css" rel="stylesheet">
+        <link href="/favicon.ico" rel="shortcut icon">
         @yield('user_css')
     </head>
     <body>

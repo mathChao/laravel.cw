@@ -87,7 +87,14 @@ class ArticleHelper{
                 foreach($filter as $key => $value){
                     if( strpos($key,  ' ')){
                         $arr = explode(' ', $key);
-                        $db->where($arr[0], $arr[1], $value);
+                        $field = $arr[0];
+                        $op = $arr[1];
+                        if($op == 'in'){
+                            $db->whereIn($field, $value);
+                        }else{
+                            $db->where($field, $op, $value);
+                        }
+
                     }else{
                         $db->where($key, $value);
                     }

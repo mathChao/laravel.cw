@@ -78,19 +78,22 @@ class Article extends Model{
         $max = max($mood);
         foreach($moodsConfig as $key => &$config){
             $config['mood'] = $mood[$key];
-            $config['height'] = $height * ($mood[$key]/$max);
+            $config['height'] = $max ? $height * ($mood[$key]/$max) : 0;
         }
         return $moodsConfig;
     }
 
     public function articleNewstextHandler($newstext){
+        $newstext = stripslashes($newstext);
         $newtext = clearImageSizeSet($newstext);
         $newtext = textImageHandler($newtext, 'urlImg', ['220x128']);
         return $newtext;
     }
 
     protected function asynLoad1(){
-        $this->attributes['url'] = '/info/'.$this->model->id;
+        $classMap = config('cwzg.classMap');
+        $classUrlName = isset($classMap[$this->model->classid]) ? $classMap[$this->model->classid]['name_en'].'/' : '';
+        $this->attributes['url'] = '/'.$classUrlName.(date('Ym')).'/'.$this->model->id.'.html';
     }
 
     protected function asynLoad2(){
