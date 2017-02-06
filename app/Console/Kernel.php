@@ -26,6 +26,7 @@ class Kernel extends ConsoleKernel
         'App\Console\Commands\GenerateTags',
         'App\Console\Commands\ChangeAuthorToPinyin',
         'App\Console\Commands\SyncComment',
+        'App\Console\Commands\SyncTags',
     ];
 
     /**
