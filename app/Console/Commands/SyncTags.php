@@ -85,7 +85,7 @@ class SyncTags extends Command
         foreach($keywords as $key => $articles){
             $this->output->progressAdvance();
             if(!isset($tags[$key])){
-                $tagid = DB::table($tagsTable)->insertGetId(['tagname'=>$key, 'num'=>count($articles)]);
+                $tagid = DB::table($tagsTable)->insertGetId(['tagname'=>$key]);
                 $num = 0;
             }else{
                 $tagid = $tags[$key]->tagid;

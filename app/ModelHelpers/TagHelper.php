@@ -2,30 +2,17 @@
 
 namespace App\ModelHelpers;
 
+use App\BusinessModels\Tag;
 use DB;
 use Cache;
 
 class TagHelper{
-    public static function getTagArticleIds($tag){
-        $cacheId = 'tag-article-ids-'.md5($tag);
-        return Cache::remember($cacheId, CACHE_TIME, function()use($tag){
-            $prefix = config('cwzg.edbPrefix');
-            $row = DB::table($prefix.'enewstags')
-                ->select('tagid')
-                ->where('tagname', $tag)
-                ->first();
+    private static $_instance = [];
 
-            $ids = [];
-            if($row){
-                $ids = DB::table($prefix.'enewstagsdata')
-                    ->select('id')
-                    ->where('tagid', $row->tagid)
-                    ->get()
-                    ->keyBy('id')
-                    ->keys()
-                    ->toArray();
-            }
-            return $ids;
-        });
+    public static function getTag($tagid){
+        if(!isset(self::$_instance[$tagid])){
+            self::$_instance[$tagid] = new Tag($tagid);
+        }
+        return self::$_instance[$tagid];
     }
 }

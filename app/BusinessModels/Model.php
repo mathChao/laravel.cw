@@ -12,11 +12,6 @@ class Model{
         false,
     ];
 
-//    public function __construct($id){
-//
-//    }
-//
-
     public function __set($name, $value)
     {
         if(isset($this->model->{$name})){
@@ -52,7 +47,7 @@ class Model{
     }
 
     public function isEmpty(){
-        return !$this->model;
+        return (!$this->model) && empty($this->attributes);
     }
 
     public function loadAllData(){

@@ -16,7 +16,7 @@ class AuthorHelper{
      * @param bool|false $reload
      * @return mixed
      */
-    public static function getAuthorInfo($id, $reload = false)
+    public static function getAuthor($id, $reload = false)
     {
         if( isset(self::$_instance[$id]) && $reload){
             unset(self::$_instance[$id]);
@@ -63,7 +63,7 @@ class AuthorHelper{
 
         $authors = [];
         foreach($ids as $id){
-            $authors[$id] = self::getAuthorInfo($id);
+            $authors[$id] = self::getAuthor($id);
         }
 
         return $authors;

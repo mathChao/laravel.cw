@@ -17,7 +17,7 @@ class CopyfromHelper{
      * @param bool|false $reload
      * @return mixed
      */
-    public static function getCopyfromInfo($id, $reload = false)
+    public static function getCopyfrom($id, $reload = false)
     {
         if( isset(self::$_instance[$id]) && $reload){
             unset(self::$_instance[$id]);
@@ -65,7 +65,7 @@ class CopyfromHelper{
 
         $copyfroms = [];
         foreach($ids as $id){
-            $copyfroms[$id] = self::getCopyfromInfo($id);
+            $copyfroms[$id] = self::getCopyfrom($id);
         }
 
         return $copyfroms;

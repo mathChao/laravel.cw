@@ -15,7 +15,7 @@ class ArticleHelper{
      * @param $id
      * @param bool|false $reload
      */
-    public static function getArticleInfo($id, $reload = false)
+    public static function getArticle($id, $reload = false)
     {
         if( isset(self::$_instance[$id]) && $reload){
             unset(self::$_instance[$id]);
@@ -73,7 +73,7 @@ class ArticleHelper{
 
         $articles = [];
         foreach($ids as $id){
-            $articles[$id] = self::getArticleInfo($id);
+            $articles[$id] = self::getArticle($id);
         }
 
         return $articles;
@@ -102,5 +102,28 @@ class ArticleHelper{
             }
             return $db->count();
         });
+    }
+
+    public static function getRandomArticle($limit = 10){
+        $cacheId = 'article-200-id';
+        $ids = Cache::remember($cacheId, CACHE_TIME, function(){
+            return DB::table(config('cwzg.edbPrefix').'ecms_article')
+                ->orderByRaw('onclick desc, newstime desc')
+                ->limit('200')
+                ->select('id')
+                ->get()
+                ->keyBy('id')
+                ->keys()
+                ->toArray();
+        });
+
+        $idsKeys = array_rand($ids, $limit);
+
+        $articles = array();
+        foreach($idsKeys as $key){
+            $articles[] = self::getArticle($ids[$key]['id']);
+        }
+
+        return $articles;
     }
 }
