@@ -24,6 +24,11 @@ class ViewClass extends Model{
         return $this->search;
     }
 
+    public function resetSearch(SystemArticleSearch &$search){
+        $search->resetAttribute();
+        $search->setIsGood('5');
+    }
+
     public static function getInstance(){
         if(!self::$_instance){
             self::$_instance = new ViewClass();

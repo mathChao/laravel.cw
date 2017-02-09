@@ -48,7 +48,7 @@ class Article extends Model{
         return $newtext;
     }
 
-    private function getArticleMood(){
+    public function getArticleMood(){
         $cacheId = 'article-mood-'.$this->id;
         return Cache::remember($cacheId, CACHE_TIME, function(){
             $results = DB::table($this->dbPre.'ecmsextend_mood')->where('id', $this->id)->get();

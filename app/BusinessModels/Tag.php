@@ -45,4 +45,9 @@ class Tag extends Model{
         }
         return $this->search;
     }
+
+    public function resetSearch(SystemArticleSearch &$search){
+        $search->resetAttribute();
+        $search->tag($this);
+    }
 }

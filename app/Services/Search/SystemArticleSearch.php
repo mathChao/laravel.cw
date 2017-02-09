@@ -92,6 +92,25 @@ class SystemArticleSearch{
         }
     }
 
+    public function resetAttribute(){
+        $this->ids = [];
+        $this->classids = [];
+        $this->ttids = [];
+        $this->authors = [];
+        $this->istop = null;
+        $this->isgood = null;
+        $this->firsttitle = null;
+        $this->ispic = null;
+
+        $this->limit = 0;
+        $this->page = 0;
+        $this->skip = 0;
+        $this->orderby = null;
+
+        $this->db = null;
+        $this->articles = [];
+    }
+
     public function setIsTop($istop){
         if($istop != $this->istop){
             $this->db = null;
@@ -182,7 +201,7 @@ class SystemArticleSearch{
         $this->appendTtid($infotype->typeid);
         return $this;
     }
-    
+
     public function topic(BusinessModels\Topic $topic){
         $this->appendId($topic->getArticleIds());
         return $this;

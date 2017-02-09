@@ -48,4 +48,9 @@ class Topic extends Model{
         }
         return $this->search;
     }
+
+    public function resetSearch(SystemArticleSearch &$search){
+        $search->resetAttribute();
+        $search->topic($this);
+    }
 }

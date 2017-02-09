@@ -35,4 +35,9 @@ class InfoType extends Model{
         }
         return $this->search;
     }
+
+    public function resetSearch(SystemArticleSearch &$search){
+        $search->resetAttribute();
+        $search->appendTtid($this->attributes['typeid']);
+    }
 }

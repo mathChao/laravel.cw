@@ -37,4 +37,10 @@ class Enewsclass extends Model{
         }
         return $this->search;
     }
+
+    public function resetSearch(SystemArticleSearch &$search){
+        $search->resetAttribute();
+        $search->appendClassId($this->attributes['classid']);
+    }
+
 }
