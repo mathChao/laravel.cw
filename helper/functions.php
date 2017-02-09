@@ -10,40 +10,12 @@ function cacheTagTransfer($var){
     }
 }
 
-function getArticlePagination($url, $page, $pageCount){
-    $pagination = [
-        'page' => $page,
-        'pageCount' => $pageCount,
-        'pre' => null,
-        'next' => null,
-        'full' => null,
-    ];
-
-    if( $page > 1 ){
-        $pagination['pre'] = str_replace('%d', $page - 1, $url);
-    }else{
-        $pagination['pre'] = str_replace('%d', 1, $url);
-    }
-
-    if( $page < $pageCount ){
-        $pagination['next'] = str_replace('%d', $page + 1, $url);
-    }else{
-        $pagination['next'] = str_replace('%d', $pageCount, $url);
-    }
-
-    $pagination['full'] = str_replace('%d', $page, $url).'&remains=1';
-
-    return $pagination;
-}
-
 function getKeywordsCacheId($keywords){
     return 'article-keywords-'.md5($keywords);
 }
 
 function clearImageSizeSet($str){
     $pattern = '/(<img.+?style=.+?)(width:\s*?\d{1,4}px;?)(.+?)(height:\s*?\d{1,4}px;?)/';
-//    preg_match_all($pattern, $str, $match);
-//    var_dump($match);
     return preg_replace($pattern, '$1$3', $str);
 }
 
@@ -69,6 +41,22 @@ function array_explode($delimiter, $string){
         $string = str_replace($delimiter, $d, $string);
         return explode($d, $string);
     }
+}
+
+function array_column_list($array, $column){
+    $return = [];
+    foreach($array as $value){
+        if(is_array($value)){
+            if(isset($value[$column])){
+                $return[] = $value[$column];
+            }
+        }elseif(is_object($value)){
+            if(isset($value->{$column})){
+                $return[] = $value[$column];
+            }
+        }
+    }
+    return $return;
 }
 
 function urlImg($size, $name, $type = 1, $quality = 90)

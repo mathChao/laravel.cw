@@ -4,13 +4,14 @@ namespace App\ModelHelpers;
 
 use App\Models\Author as DbAuthor;
 use App\BusinessModels\Author as BusinessAuthor;
+use App\ModelHelpers\Tools\DbSearch;
 
 use DB;
 use Cache;
 
 class AuthorHelper{
     private static $_instance = [];
-
+    private static $_dbSearch;
     /**
      * @param $id
      * @param bool|false $reload
@@ -28,6 +29,13 @@ class AuthorHelper{
         return self::$_instance[$id];
     }
 
+    private static function getDbSearch(){
+        if(self::$_dbSearch){
+            self::$_dbSearch = new DbSearch('ecms_author');
+        }
+        return self::$_dbSearch;
+    }
+
     /**
      * @param null $filter
      * @param null $pageRow
@@ -37,27 +45,8 @@ class AuthorHelper{
      */
     public static function authorSearch($filter = null, $pageRow = null, $page = 1, $orderBy = null){
         $cacheId = 'author-search-ids-'.cacheTagTransfer($filter).'-'.$pageRow.'-'.$page.'-'.($orderBy);
-        $ids = Cache::remember($cacheId, CACHE_TIME, function()use($filter, $pageRow, $page, $orderBy){
-            $db = DB::table(config('cwzg.edbPrefix').'ecms_author');
-            if($filter && is_array($filter)){
-                foreach($filter as $key => $value){
-                    if( strpos($key,  ' ')){
-                        $arr = explode(' ', $key);
-                        $db->where($arr[0], $arr[1], $value);
-                    }else{
-                        $db->where($key, $value);
-                    }
-                }
-            }
-
-            if($page && $pageRow){
-                $db->limit($pageRow)->skip(($page-1)*$pageRow);
-            }
-
-            if($orderBy){
-                $db->orderByRaw($orderBy);
-            }
-
+        $ids = Cache::remember($cacheId, SHORT_CACHE_TIME, function()use($filter, $pageRow, $page, $orderBy){
+            $db = self::getDbSearch()->getSearchDb($filter,$pageRow, $page, $orderBy);
             return $db->select('id')->get()->keyBy('id')->keys()->toArray();
         });
 
@@ -67,5 +56,12 @@ class AuthorHelper{
         }
 
         return $authors;
+    }
+
+    public static function getAuthorColumnList($column = 'title'){
+        $cacheId = 'author-name-list-'.$column;
+        return Cache::remember($cacheId, LONG_CACHE_TIME, function()use($column){
+            return array_column_list(self::authorSearch(), $column);
+        });
     }
 }

@@ -10,7 +10,15 @@
 namespace App\Services\Search;
 
 use App\ModelHelpers\ArticleHelper;
+use App\ModelHelpers\EnewsclassHelper;
+use App\ModelHelpers\TopicHelper;
+use App\ModelHelpers\TagHelper;
+use App\ModelHelpers\DebrisHelper;
+
+use App\BusinessModels;
+
 use DB;
+use Cache;
 
 class SystemArticleSearch{
     private $dbPre = null;
@@ -157,77 +165,62 @@ class SystemArticleSearch{
         return $this;
     }
 
-    public function newsClass($classname){
-        $classInfo = DB::table($this->dbPre.'enewclass')
-            ->where('classname', $classname)
-            ->select('classid')
-            ->first();
-
-        $this->appendClassId($classInfo->classId);
+    public function newsClass(BusinessModels\Enewsclass $classInfo){
+        $this->appendClassId($classInfo->classid);
         return $this;
     }
 
-    public function infoType($infotype){
-        $infotypeInfo = DB::table($this->dbPre.'enewsinfotype')
-            ->where('tname', $infotype)
-            ->select('typeid')
-            ->first();
-
-        $this->appendTtid($infotypeInfo->typeid);
+    public function newsClassName($classname){
+        $classes = EnewsclassHelper::enewsclassSearch(['classname'=>$classname]);
+        foreach($classes as $classid => $class){
+            $this->appendClassId($classid);
+        }
         return $this;
     }
 
+    public function infoType(BusinessModels\InfoType $infotype){
+        $this->appendTtid($infotype->typeid);
+        return $this;
+    }
+    
+    public function topic(BusinessModels\Topic $topic){
+        $this->appendId($topic->getArticleIds());
+        return $this;
+    }
 
-    public function topic($topic){
-        $topicInfo = DB::table($this->dbPre.'enewszt')
-            ->where('ztname', $topic)
-            ->select('ztid')
-            ->first();
-
-        $ids = DB::table($this->dbPre.'enewsztinfo')
-            ->where('ztid', $topicInfo->ztid)
-            ->select('id')
-            ->get()
-            ->keyBy('id')
-            ->keys()
-            ->toArray();
-        $this->appendId($ids);
+    public function topicName($topic){
+        $topics = TopicHelper::topicSearch(['ztname'=>$topic]);
+        foreach($topics as $topic){
+            $this->appendId($topic->getArticleIds());
+        }
 
         return $this;
     }
 
-    public function tag($tag){
-        $tagInfo = DB::table($this->dbPre.'enewstags')
-            ->select('tagid')
-            ->where('tagname', $tag)
-            ->first();
+    public function tag(BusinessModels\Tag $tag){
+        $this->appendId($tag->getArticleIds());
+        return $this;
+    }
 
-        $ids = DB::table($this->dbPre.'newstagsdata')
-            ->select('id')
-            ->where('tagid', $tagInfo->tagid)
-            ->get()
-            ->keyBy('id')
-            ->keys()
-            ->toArray();
-        $this->appendId($ids);
+    public function tagName($tag){
+        $tags = TagHelper::tagSearch(['tagname'=>$tag]);
+        foreach($tags as $value){
+            $this->appendId($value->getArticleIds());
+        }
 
         return $this;
     }
 
-    public function debris($debris){
-        $debrisInfo = DB::table($this->dbPre.'newssp')
-            ->select(['spid','sptype'])
-            ->where('zpname', $debris)
-            ->first();
+    public function debris(BusinessModels\Debris $debris){
+        $this->appendId($debris->getArticleIds());
+        return $this;
+    }
 
-        $ids = DB::table($this->dbPre.'enewssp_'.$debrisInfo->sptype)
-            ->where('spid', $debrisInfo->spid)
-            ->select('id')
-            ->get()
-            ->keyBy('id')
-            ->keys()
-            ->toArray();
-        $this->appendId($ids);
+    public function debrisName($debris){
+        $debrises = DebrisHelper::debrisSearch(['zpname'=>$debris]);
+        foreach($debrises as $debris){
+            $this->appendId($debris->getArticleIds());
+        }
         return $this;
     }
 
@@ -340,8 +333,10 @@ class SystemArticleSearch{
 
     public function get(){
         if(empty($this->articles)){
-            $db = $this->getSearchDb();
-            $ids = $db->select('id')->get()->keyBy('id')->keys()->toArray();
+            $cacheId = 'search-get-article-ids-'.md5(serialize($this));
+            $ids = Cache::remember($cacheId, SHORT_CACHE_TIME, function(){
+                return $this->getSearchDb()->select('id')->get()->keyBy('id')->keys()->toArray();
+            });
             foreach($ids as $id){
                 $this->articles[$id] = ArticleHelper::getArticle($id);
             }
@@ -350,14 +345,24 @@ class SystemArticleSearch{
     }
 
     public function count(){
-       return $this->getSearchDb()->count();
+        $cacheId = 'search-count-'.md5(serialize($this));
+        return Cache::remember($cacheId, SHORT_CACHE_TIME, function(){
+            return $this->getSearchDb()->count();
+        });
     }
 
     public function sum($column){
-        return $this->getSearchDb()->sum($column);
+        $cacheId = 'search-sum-'.md5(serialize($this));
+        return Cache::remember($cacheId, SHORT_CACHE_TIME, function()use($column){
+            return $this->getSearchDb()->sum($column);
+        });
+
     }
 
     public function avg($column){
-        return $this->getSearchDb()->average($column);
+        $cacheId = 'search-avg-'.md5(serialize($this));
+        return Cache::remember($cacheId, SHORT_CACHE_TIME, function()use($column){
+            return $this->getSearchDb()->average($column);
+        });
     }
 }

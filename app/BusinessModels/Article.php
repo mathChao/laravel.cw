@@ -73,7 +73,6 @@ class Article extends Model{
         $this->attributes = array_merge($this->attributes, $this->getArticleData(), $this->getArticleMood());
     }
 
-    //todo need to complete
     public function getArticleTags(){
         $cacheId = 'article-tag-id-'.$this->id;
         $tagIds = Cache::remember($cacheId, CACHE_TIME, function(){

@@ -7,10 +7,12 @@ use App\BusinessModels\Enewsclass as BusinessEnewclass;
 
 use DB;
 use Cache;
+use App\ModelHelpers\Tools\DbSearch;
 
 class EnewsclassHelper{
 
     private static $_instance = [];
+    private static $_dbSearch;
 
     /**
      * @param $id
@@ -29,6 +31,13 @@ class EnewsclassHelper{
         return self::$_instance[$classid];
     }
 
+    private static function getDbSearch(){
+        if(self::$_dbSearch){
+            self::$_dbSearch = new DbSearch('enewsclass');
+        }
+        return self::$_dbSearch;
+    }
+
     /**
      * @param null $filter
      * @param null $pageRow
@@ -39,20 +48,8 @@ class EnewsclassHelper{
     public static function enewsclassSearch($filter = null, $pageRow = null, $page = 1, $orderBy = null){
         $cacheId = 'enewsclass-search-classids-'.cacheTagTransfer($filter).'-'.$pageRow.'-'.$page.'-'.($orderBy);
 
-        $classids = Cache::remember($cacheId, CACHE_TIME, function()use($filter, $pageRow, $page, $orderBy){
-            $db = DB::table(config('cwzg.edbPrefix').'enewsclass');
-            if($filter && is_array($filter)){
-                $db->where($filter);
-            }
-
-            if($page && $pageRow){
-                $db->limit($pageRow)->skip(($page-1)*$pageRow);
-            }
-
-            if($orderBy){
-                $db->orderByRaw($orderBy);
-            }
-
+        $classids = Cache::remember($cacheId, SHORT_CACHE_TIME, function()use($filter, $pageRow, $page, $orderBy){
+            $db = self::getDbSearch()->getSearchDb($filter,$pageRow, $page, $orderBy);
             return $db->select('classid')->get()->keyBy('classid')->keys()->toArray();
         });
 

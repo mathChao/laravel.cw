@@ -10,16 +10,29 @@ class Debris extends Model{
     private $search = null;
     private $dbPre = null;
 
-    public function __construct($debris)
+    public function __construct($spid)
     {
         $this->dbPre = config('cwzg.edbPrefix');
-        $this->attributes['debris'] = $debris;
+        $this->attributes['spid'] = $spid;
     }
 
     private function getDebrisInfo(){
-        $cacheId = 'debris-'.md5($this->debris);
+        $cacheId = 'debris-'.$this->attributes['spid'];
         return  Cache::remember($cacheId, CACHE_TIME, function(){
-            return DB::table($this->dbPre.'enewssp')->where('spname', $this->attributes['debris'])->first();
+            return DB::table($this->dbPre.'enewssp')->where('spid', $this->attributes['spid'])->first();
+        });
+    }
+
+    public function getArticleIds(){
+        $cacheId = 'debris-article-id-'.$this->attributes['spid'];
+        return Cache::remember($cacheId, SHORT_CACHE_TIME, function(){
+            return DB::table($this->dbPre.'enewssp_'.$this->sptype)
+                ->where('spid', $this->spid)
+                ->select('id')
+                ->get()
+                ->keyBy('id')
+                ->keys()
+                ->toArray();
         });
     }
 
@@ -30,7 +43,7 @@ class Debris extends Model{
     public function getSearch(){
         if(!$this->search){
             $this->search = new SystemArticleSearch();
-            $this->search->debris($this->attributes['debris']);
+            $this->search->debris($this);
         }
         return $this->search;
     }

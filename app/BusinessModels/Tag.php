@@ -25,10 +25,23 @@ class Tag extends Model{
         });
     }
 
+    public function getArticleIds(){
+        $cacheId = 'tag-article-id-'.$this->attributes['tagid'];
+        return Cache::remember($cacheId, SHORT_CACHE_TIME, function(){
+            return DB::table($this->dbPre.'newstagsdata')
+                ->select('id')
+                ->where('tagid', $this->attributes['tagid'])
+                ->get()
+                ->keyBy('id')
+                ->keys()
+                ->toArray();
+        });
+    }
+
     public function getSearch(){
         if(!$this->search){
             $this->search = new SystemArticleSearch();
-            $this->search->tag($this->tagname);
+            $this->search->tag($this);
         }
         return $this->search;
     }

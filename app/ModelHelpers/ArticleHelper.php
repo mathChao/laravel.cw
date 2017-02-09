@@ -4,13 +4,14 @@ namespace App\ModelHelpers;
 
 use App\Models\Article as DbArticle;
 use App\BusinessModels\Article as BusinessArticle;
+use App\ModelHelpers\Tools\DbSearch;
 
 use DB;
 use Cache;
 
 class ArticleHelper{
     private static $_instance = [];
-
+    private static $_dbSearch;
     /**
      * @param $id
      * @param bool|false $reload
@@ -27,6 +28,13 @@ class ArticleHelper{
         return self::$_instance[$id];
     }
 
+    private static function getDbSearch(){
+        if(self::$_dbSearch){
+            self::$_dbSearch = new DbSearch('ecms_article');
+        }
+        return self::$_dbSearch;
+    }
+
     /**
      * @param null $filter
      * @param null $pageRow
@@ -36,38 +44,8 @@ class ArticleHelper{
      */
     public static function articleSearch($filter = null, $pageRow = null, $page = 1, $orderBy = 'newstime desc'){
         $cacheId = 'article-search-ids-'.cacheTagTransfer($filter).'-'.$pageRow.'-'.$page.'-'.cacheTagTransfer($orderBy);
-        $ids = Cache::remember($cacheId, CACHE_TIME, function()use($filter, $pageRow, $page, $orderBy){
-            $db = DB::table(config('cwzg.edbPrefix').'ecms_article');
-            if($filter && is_array($filter)){
-                foreach($filter as $key => $value){
-                    if( strpos($key,  ' ')){
-                        $arr = explode(' ', $key);
-                        $field = $arr[0];
-                        $op = $arr[1];
-                        if($op == 'in'){
-                            $db->whereIn($field, $value);
-                        }else{
-                            $db->where($field, $op, $value);
-                        }
-
-                    }else{
-                        $db->where($key, $value);
-                    }
-                }
-            }
-
-            if($pageRow){
-                $db->limit($pageRow);
-            }
-
-            if($page){
-                $db->skip(($page-1)*$pageRow);
-            }
-
-            if($orderBy){
-                $db->orderByRaw($orderBy);
-            }
-
+        $ids = Cache::remember($cacheId, SHORT_CACHE_TIME, function()use($filter, $pageRow, $page, $orderBy){
+            $db = self::getDbSearch()->getSearchDb($filter, $pageRow, $page, $orderBy);
             return $db->select('id')->get()->keyBy('id')->keys()->toArray();
         });
 
@@ -81,32 +59,15 @@ class ArticleHelper{
 
     public static function getArticleCount($filter = null){
         $cacheId = 'article-count-'.cacheTagTransfer($filter);
-        return Cache::remember($cacheId, CACHE_TIME, function()use($filter){
-            $db = DB::table(config('cwzg.edbPrefix').'ecms_article');
-            if($filter && is_array($filter)){
-                foreach($filter as $key => $value){
-                    if( strpos($key,  ' ')){
-                        $arr = explode(' ', $key);
-                        $field = $arr[0];
-                        $op = $arr[1];
-                        if($op == 'in'){
-                            $db->whereIn($field, $value);
-                        }else{
-                            $db->where($field, $op, $value);
-                        }
-
-                    }else{
-                        $db->where($key, $value);
-                    }
-                }
-            }
+        return Cache::remember($cacheId, SHORT_CACHE_TIME, function()use($filter){
+            $db = self::getDbSearch()->getSearchDb($filter, null, null, null);
             return $db->count();
         });
     }
 
     public static function getRandomArticle($limit = 10){
         $cacheId = 'article-200-id';
-        $ids = Cache::remember($cacheId, CACHE_TIME, function(){
+        $ids = Cache::remember($cacheId, LONG_CACHE_TIME, function(){
             return DB::table(config('cwzg.edbPrefix').'ecms_article')
                 ->orderByRaw('onclick desc, newstime desc')
                 ->limit('200')

@@ -2,8 +2,9 @@
 
 /*site define*/
 define('HOST_NAME',env('ENV_HOST_NAME'));
-define('CACHE_TIME', 1);
-define('SHORT_CACHE_TIME', 10);
+define('SHORT_CACHE_TIME', 1);
+define('CACHE_TIME', 10);
+define('LONG_CACHE_TIME', 60);
 
 /* base path */
 define('ROOT_PATH', dirname(__DIR__));
