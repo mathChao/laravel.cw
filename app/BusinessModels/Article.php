@@ -5,6 +5,7 @@ namespace App\BusinessModels;
 use App\Models\Article as DbArticle;
 use App\ModelHelpers\ArticleHelper;
 use App\ModelHelpers\TagHelper;
+use Sunra\PhpSimple\HtmlDomParser;
 
 use Cache;
 use DB;
@@ -32,6 +33,42 @@ class Article extends Model{
                 $result['newstext'] = $this->articleNewstextHandler($result['newstext']);
             }
             return $result;
+        });
+    }
+
+    public function getNewsTextPagination(){
+        $cacheId = 'article-newstext-pagination-'.$this->id;
+        Cache::forget($cacheId);
+        return Cache::remember($cacheId, CACHE_TIME, function(){
+            $elements = HtmlDomParser::str_get_html($this->newstext)->childNodes();
+            $character = strip_tags($this->newstext);
+            $pageLength = config('cwzg.newsTextPageLength');
+            $pagination = [
+                'pagelength' => $pageLength,
+                'pagenum' => 0,
+            ];
+
+            if(mb_strlen($character) <= $character){
+                return false;
+            }
+
+            $list = [];
+            $num = 0;
+            $content = '';
+            $page = 1;
+            foreach($elements as $element){
+                $num += mb_strlen($element->text());
+                $content .= $element->outertext();
+                if($num > $pageLength ){
+                    $list['page-'.$page] = $content;
+                    $page++;
+                    $content = '';
+                    $num = 0;
+                }
+            }
+            $pagination['list'] = $list;
+            $pagination['pagenum'] = $page-1;
+            return $pagination;
         });
     }
 
