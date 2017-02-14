@@ -124,14 +124,14 @@ $(function(){
     var $content = $('.p-content');
     if($content.length){
         var html = '';
-        ctrlShowText();
-
-        $content.on('click', '.js-article-content-load', function(){
-            var $article  = $('.js-article-content');
-            $article.empty();
-            $article.append($(html));
-            $('.js-article-content-load—wrap').css('display', 'none');
-        });
+        //ctrlShowText();
+        //
+        //$content.on('click', '.js-article-content-load', function(){
+        //    var $article  = $('.js-article-content');
+        //    $article.empty();
+        //    $article.append($(html));
+        //    $('.js-article-content-load—wrap').css('display', 'none');
+        //});
     }
 
     var $mood = $('.mood');

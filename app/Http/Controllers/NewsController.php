@@ -10,6 +10,7 @@ use App\Tools\Ajax;
 
 use DB;
 use Session;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class NewsController extends Controller{
     //首页
@@ -212,13 +213,25 @@ class NewsController extends Controller{
         ]);
     }
 
-    public function newsInfo($type,$time,$id){
+    public function newsInfo($type, $time, $id, Request $request){
         $article = ArticleHelper::getArticleInfo($id);
         if($article->isEmpty()){
             return 'article not exist';
         }
 
         $class = EnewsclassHelper::getClassInfo($article->classid);
+
+        $newstext = $article->newstext;
+        $pagination = $article->getNewsTextPagination();
+        $paginator = false;
+        if($pagination){
+            $page  = isset($request->page) ? $request->page : 1 ;
+            $page = min($page, $pagination['pagenum']);
+            $page = max($page, 1);
+            $newstext = $pagination['list']['page-'.$page];
+            $paginator = new LengthAwarePaginator($pagination['list'], $pagination['pagenum'], 1);
+            $paginator->setPath($article->url);
+        }
 
         return view('content', [
             'article' => $article,
@@ -228,7 +241,8 @@ class NewsController extends Controller{
             'keywords' => $article->keyboard,
             'description' => $article->smalltext,
             'class' => $class,
-            'ttid' => Session::has('ttid') ? Session::get('ttid') : 12,
+            'newstext' => $newstext,
+            'paginator' => $paginator
         ]);
     }
 

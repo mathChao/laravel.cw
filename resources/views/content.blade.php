@@ -16,8 +16,11 @@
             <span style="margin-right: 16px;">作者：{{$article->author}}</span>
             <time>{{date('Y-m-d H:m', $article->newstime)}}</time>
             <section class="js-article-content article-content">
-                {!! $article->newstext !!}
+                {!! $newstext !!}
             </section>
+            @if($paginator)
+                {!! $paginator->render() !!}
+            @endif
         </article>
 
         @if(count($related))
