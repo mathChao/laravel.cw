@@ -38,7 +38,6 @@ class Article extends Model{
 
     public function getNewsTextPagination(){
         $cacheId = 'article-newstext-pagination-'.$this->id;
-        Cache::forget($cacheId);
         return Cache::remember($cacheId, CACHE_TIME, function(){
             $elements = HtmlDomParser::str_get_html($this->newstext)->childNodes();
             $character = strip_tags($this->newstext);
@@ -66,8 +65,13 @@ class Article extends Model{
                     $num = 0;
                 }
             }
+            if($content){
+                $list['page-'.$page] = $content;
+            }else{
+                $page -= 1;
+            }
             $pagination['list'] = $list;
-            $pagination['pagenum'] = $page-1;
+            $pagination['pagenum'] = $page;
             return $pagination;
         });
     }
