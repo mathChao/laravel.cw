@@ -12,7 +12,7 @@
 @section('content')
     <div class="p-content">
         <article class="detal">
-            <h1>{{$article->title}}</h1>
+            <h1>{{$article->ftitle ? $article->ftitle : $article->title}}</h1>
             <span style="margin-right: 16px;">作者：{{$article->author}}</span>
             <time>{{date('Y-m-d H:m', $article->newstime)}}</time>
             <section class="js-article-content article-content">
