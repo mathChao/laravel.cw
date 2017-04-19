@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use App\Services\SyncDuoShuoComments;
+use App\Services\SyncDuoShuoComments2;
 
 class SyncComment extends Command
 {
@@ -38,7 +38,7 @@ class SyncComment extends Command
      */
     public function handle()
     {
-        $handler  = new SyncDuoShuoComments();
+        $handler  = new SyncDuoShuoComments2();
         $number = $this->argument('number');
 
         while($number){

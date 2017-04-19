@@ -28,6 +28,7 @@ class Kernel extends ConsoleKernel
         'App\Console\Commands\SyncComment',
         'App\Console\Commands\SyncTags',
         'App\Console\Commands\NoticePassword',
+        'App\Console\Commands\genChangYanComment',
     ];
 
     /**
