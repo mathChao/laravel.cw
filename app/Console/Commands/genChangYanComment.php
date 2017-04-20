@@ -112,10 +112,12 @@ class genChangYanComment extends Command
 
         foreach($comments as $row){
             $comment = json_decode($row->comment);
+            $content = str_replace(array("&nbsp;","<br />"),array("","\r\n"),$comment->message);
+            $content = strip_tags($content);
             $json['comments'][] = [
                 'cmtid' => $comment->post_id  ,
                 'ctime' => strtotime($comment->created_at).'000',
-                'content' => str_replace('<br />',"\r\n",$comment->message),
+                'content' => $content,
                 'replyid' => empty($comment->parent_id) ? "0" : $comment->parent_id,
                 'user' => [
                     'userid' => $comment->author_id,
