@@ -47,12 +47,12 @@ class genChangYanComment extends Command
         $commentTable = 'pl_duoshuo';
 
         $aids = DB::table($articleTable)->join($commentTable, $articleTable.'.id','=',$commentTable.'.article_id')
-            ->whereIn($commentTable.'.status',['approve'])->select($articleTable.'.id')->distinct()->get();
+            ->select($articleTable.'.id')->distinct()->get();
 
         if($aids){
             foreach($aids as $row){
                 $article  = ArticleHelper::getArticleInfo($row->id);
-                $comments = CommentDuoShuo::where('article_id',$row->id)->get();
+                $comments = CommentDuoShuo::where('article_id',$row->id)->where('status','approve')->get();
                 $json = $this->format($article,$comments)."\n";
                 file_put_contents(public_path().'/comments.json',$json,FILE_APPEND);
             }
