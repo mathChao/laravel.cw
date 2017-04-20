@@ -115,7 +115,7 @@ class genChangYanComment extends Command
             $json['comments'][] = [
                 'cmtid' => $comment->post_id  ,
                 'ctime' => strtotime($comment->created_at).'000',
-                'content' => $comment->message,
+                'content' => str_replace('<br />',"\r\n",$comment->message),
                 'replyid' => empty($comment->parent_id) ? "0" : $comment->parent_id,
                 'user' => [
                     'userid' => $comment->author_id,
