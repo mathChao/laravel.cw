@@ -53,12 +53,10 @@ class genChangYanComment extends Command
             foreach($aids as $row){
                 $article  = ArticleHelper::getArticleInfo($row->id);
                 $comments = CommentDuoShuo::where('article_id',$row->id)->get();
-                $json = $this->format($article,$comments);
-                dd($json);
+                $json = $this->format($article,$comments)."\n";
+                file_put_contents(public_path().'/comments.json',$json,FILE_APPEND);
             }
         }
-        // 查询出评论的文章相关信息
-        // 输出评论到文件
     }
 
     protected function format($article,$comments){
@@ -118,26 +116,19 @@ class genChangYanComment extends Command
                 'cmtid' => $comment->post_id  ,
                 'ctime' => strtotime($comment->created_at).'000',
                 'content' => $comment->message,
-                'replyid' => $comment->parent_id,
+                'replyid' => empty($comment->parent_id) ? "0" : $comment->parent_id,
                 'user' => [
                     'userid' => $comment->author_id,
                     'nickname' => $comment->author_name,
                     'usericon' => '',
                     'userurl' => $comment->author_url,
-                    'usermetadata' => [
-                        "area"   => "",
-            		    "gender" => "",
-            		    "kk"     => "",
-            		    "level"  => 0,
-                    ],
                 ],
                 'ip'          => $comment->ip,
                 'useragent'   => $comment->agent,
-                'channeltype' => '',
+                'channeltype' => '1',
                 'from'       => '',
                 'spcount'    => '',
                 'opcount'    => '',
-                'attachment' => [],
             ];
         }
 
