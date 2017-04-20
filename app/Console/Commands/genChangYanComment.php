@@ -47,7 +47,7 @@ class genChangYanComment extends Command
         $commentTable = 'pl_duoshuo';
 
         $aids = DB::table($articleTable)->join($commentTable, $articleTable.'.id','=',$commentTable.'.article_id')
-            ->select($articleTable.'.id')->distinct()->get();
+            ->whereIn($commentTable.'.status',['approve'])->select($articleTable.'.id')->distinct()->get();
 
         if($aids){
             foreach($aids as $row){
