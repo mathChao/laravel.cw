@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Models\CommentDuoShuo;
 use App\ModelHelpers\CommentHelper2;
-use App\Models\CommentSyncLog;
+use App\Models\CommentSyncLog2;
 use Carbon\Carbon;
 use DB;
 use Illuminate\Support\Facades\Config;
@@ -86,7 +86,7 @@ class SyncDuoShuoComments2
             // 批量更新评论数量
             //CommentHelper::updateCommentCount();
             // after batch dealt, then insert a log;
-            CommentSyncLog::create(['log_id' => $last_log_id, 'updatetime' => time()]);
+            CommentSyncLog2::create(['log_id' => $last_log_id, 'updatetime' => time()]);
 
         }
 
@@ -94,7 +94,7 @@ class SyncDuoShuoComments2
     }
 
     protected function getLastLogId(){
-        $last_log = CommentSyncLog::orderBy('id','desc')->first();
+        $last_log = CommentSyncLog2::orderBy('id','desc')->first();
         if($last_log){
             return $last_log->log_id;
         }
